@@ -8,32 +8,11 @@ Be respectful, inclusive, and professional in all interactions. We're building a
 
 ## Getting Started
 
-### Prerequisites
+👉 **New contributor?** Start with [Setup & Getting Started](docs/setup.md) first!
 
-- S&box SDK (latest version)
-- .NET 10 SDK
-- Visual Studio, VS Code, or Rider
-- Git
-
-### Setup Development Environment
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/echohello-dev/basebound.git
-   cd basebound
-   ```
-
-2. **Open in S&box**
-   - Launch S&box and open `basebound.sbproj`
-   - The project will load with hot-reload enabled
-
-3. **Open in IDE**
-   - For C# development: Open `basebound.sln`
-   - Code will auto-compile with millisecond hot-reload
-
-4. **Test your changes**
-   - Run the default scene: `Assets/scenes/minimal.scene`
-   - Changes compile and reload automatically
+- Prerequisites and project setup
+- Development workflow and hot-reload
+- Troubleshooting common issues
 
 ## Development Workflow
 
@@ -47,71 +26,12 @@ Create branches with descriptive names:
 
 ### Code Standards
 
-#### Component Pattern
-
-All game behavior must use the Component pattern. Follow this structure:
-
-```csharp
-public sealed class MyGameSystem : Component
-{
-    [Property] public string ConfigValue { get; set; } = "default";
-    [RequireComponent] private OtherComponent Dependency { get; set; }
-
-    protected override void OnAwake() { }       // Initialization
-    protected override void OnStart() { }       // First frame setup
-    protected override void OnUpdate() { }      // Per-frame logic
-    protected override void OnFixedUpdate() { } // Physics tick (50/sec)
-    protected override void OnDestroy() { }     // Cleanup
-}
-```
-
-**Key Rules:**
-- Use `sealed` classes unless inheritance is required
-- Expose configuration with `[Property]` attributes
-- Auto-link dependencies with `[RequireComponent]`
-- Keep lifecycle methods focused on their purpose
-
-#### Networking
-
-Always consider multiplayer when writing code:
-
-```csharp
-// Bad: Only works for local player
-if (Input.Down("attack")) Fire();
-
-// Good: Check if controlled by this client
-if (!IsProxy && Input.Down("attack"))
-{
-    Fire();
-}
-
-// Good: Broadcast to all clients
-[Rpc.Broadcast]
-public void OnPlayerJump() { }
-```
-
-#### Naming Conventions
-
-- **Classes**: `PascalCase` - `PlayerController`, `EconomySystem`
-- **Methods**: `PascalCase` - `OnPlayerSpawn()`, `CalculateReward()`
-- **Properties**: `PascalCase` - `Health`, `IsAlive`
-- **Fields**: `camelCase` (private) - `_localCache`, `_spawnPoints`
-- **Constants**: `UPPER_SNAKE_CASE` - `MAX_PLAYERS`, `TICK_RATE`
-
-#### Documentation
-
-- Add XML comments to public classes and methods
-- Keep comments concise but descriptive
-- Update README.md if adding new systems
-
-```csharp
-/// <summary>
-/// Calculates the reward for a completed contract based on difficulty.
-/// </summary>
-/// <param name="contract">The contract to evaluate</param>
-/// <returns>Reward in currency</returns>
-public int CalculateReward(Contract contract) { }
-```
+👉 **See [Code Standards](docs/code-standards.md)** for detailed guidelines on:
+- Naming conventions (classes, methods, properties, fields)
+- Component pattern and best practices
+- Networking patterns and RPC usage
+- Error handling and performance
+- Documentation standards
 
 ### Commit Messages
 
@@ -217,6 +137,17 @@ Include:
 - Actual behavior
 - S&box version and .NET version
 - Relevant code or logs
+
+## Documentation
+
+When adding features or making significant changes, update relevant documentation:
+
+- **New architecture or structure changes** → Update [docs/architecture.md](docs/architecture.md)
+- **New networking features** → Update [docs/networking.md](docs/networking.md)
+- **New game systems** → Update [docs/gameplay.md](docs/gameplay.md)
+- **Setup or tooling changes** → Update [docs/setup.md](docs/setup.md)
+- **Code style changes** → Update [docs/code-standards.md](docs/code-standards.md)
+- **Project overview changes** → Update [README.md](README.md)
 
 ## Questions?
 
