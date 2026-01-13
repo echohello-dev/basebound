@@ -8,7 +8,7 @@ Be respectful, inclusive, and professional in all interactions. We're building a
 
 ## Getting Started
 
-👉 **New contributor?** Start with [Setup & Getting Started](docs/setup.md) first!
+👉 **New contributor?** Start with [Setup & Getting Started](Docs/setup.md) first!
 
 - Prerequisites and project setup
 - Development workflow and hot-reload
@@ -26,7 +26,7 @@ Create branches with descriptive names:
 
 ### Code Standards
 
-👉 **See [Code Standards](docs/code-standards.md)** for detailed guidelines on:
+👉 **See [Code Standards](Docs/code-standards.md)** for detailed guidelines on:
 - Naming conventions (classes, methods, properties, fields)
 - Component pattern and best practices
 - Networking patterns and RPC usage
@@ -142,11 +142,11 @@ Include:
 
 When adding features or making significant changes, update relevant documentation:
 
-- **New architecture or structure changes** → Update [docs/architecture.md](docs/architecture.md)
-- **New networking features** → Update [docs/networking.md](docs/networking.md)
-- **New game systems** → Update [docs/gameplay.md](docs/gameplay.md)
-- **Setup or tooling changes** → Update [docs/setup.md](docs/setup.md)
-- **Code style changes** → Update [docs/code-standards.md](docs/code-standards.md)
+- **New architecture or structure changes** → Update [Docs/architecture.md](Docs/architecture.md)
+- **New networking features** → Update [Docs/networking.md](Docs/networking.md)
+- **New game systems** → Update [Docs/gameplay.md](Docs/gameplay.md)
+- **Setup or tooling changes** → Update [Docs/setup.md](Docs/setup.md)
+- **Code style changes** → Update [Docs/code-standards.md](Docs/code-standards.md)
 - **Project overview changes** → Update [README.md](README.md)
 
 ## Questions?

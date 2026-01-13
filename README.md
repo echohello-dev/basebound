@@ -24,7 +24,7 @@ A multiplayer S&box gamemode built on the Source 2 engine with C# that emphasize
 
 ## Getting Started
 
-👉 **New to the project?** Start with [Setup & Getting Started](docs/setup.md)
+👉 **New to the project?** Start with [Setup & Getting Started](Docs/setup.md)
 
 - Prerequisites, installation, and first run
 - Development workflow and hot-reload
@@ -32,13 +32,13 @@ A multiplayer S&box gamemode built on the Source 2 engine with C# that emphasize
 
 ## Documentation
 
-Comprehensive documentation is available in the [docs/](docs/) directory:
+Comprehensive documentation is available in the [Docs/](Docs/) directory:
 
-- **[Setup & Getting Started](docs/setup.md)** - Installation, project structure, first run
-- **[Architecture](docs/architecture.md)** - Component pattern, lifecycle, project structure
-- **[Code Standards](docs/code-standards.md)** - Naming conventions, coding patterns, best practices
-- **[Networking](docs/networking.md)** - Multiplayer implementation, RPC, synchronization
-- **[Gameplay Systems](docs/gameplay.md)** - Economy, raids, contracts, base building
+- **[Setup & Getting Started](Docs/setup.md)** - Installation, project structure, first run
+- **[Architecture](Docs/architecture.md)** - Component pattern, lifecycle, project structure
+- **[Code Standards](Docs/code-standards.md)** - Naming conventions, coding patterns, best practices
+- **[Networking](Docs/networking.md)** - Multiplayer implementation, RPC, synchronization
+- **[Gameplay Systems](Docs/gameplay.md)** - Economy, raids, contracts, base building
 - **[Contributing](CONTRIBUTING.md)** - Pull request process, development workflow
 - **[AGENTS.md](AGENTS.md)** - AI agent instructions for development
 
@@ -49,7 +49,7 @@ Comprehensive documentation is available in the [docs/](docs/) directory:
 
 ## Architecture
 
-All game behavior uses the **Component pattern**. See [Architecture](docs/architecture.md) for details:
+All game behavior uses the **Component pattern**. See [Architecture](Docs/architecture.md) for details:
 
 - Component lifecycle (OnAwake, OnStart, OnUpdate, OnFixedUpdate, OnDestroy)
 - Best practices and patterns
