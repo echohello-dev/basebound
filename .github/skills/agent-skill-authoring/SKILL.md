@@ -17,17 +17,26 @@ This skill teaches you how to write effective Agent Skills following the open ag
 - Understanding the Agent Skills format
 - Packaging domain expertise for reuse
 
+## Skill Location
+
+All skills must be created in `.github/skills/`:
+- ✅ Create: `.github/skills/my-new-skill/SKILL.md`
+- ❌ Never modify: `Docs/`, `README.md`, `AGENTS.md` when working on skills
+- Skills are self-contained and don't require documentation updates
+
 ## Skill Structure
 
-Every skill is a directory with a `SKILL.md` file:
+Every skill is a directory with a `SKILL.md` file in `.github/skills/`:
 
 ```
-my-skill/
+.github/skills/my-skill/
 ├── SKILL.md          # Required: instructions + metadata
 ├── scripts/          # Optional: executable code
 ├── references/       # Optional: detailed documentation
 └── assets/           # Optional: templates, resources
 ```
+
+**IMPORTANT**: Skills are self-contained in `.github/skills/`. Never update project documentation files (`Docs/`, `README.md`, `AGENTS.md`) when creating or modifying skills.
 
 ## SKILL.md Format
 
@@ -199,13 +208,28 @@ ALTER TABLE users DROP COLUMN email;
 Use the reference library to validate skills:
 
 ```bash
-npx skills-ref validate ./my-skill
+npx skills-ref validate ./.github/skills/my-skill
 ```
 
 This checks frontmatter validity and naming conventions.
+
+## Important Rules
+
+When creating or modifying skills:
+
+1. ✅ **Do**: Create skills in `.github/skills/<skill-name>/SKILL.md`
+2. ✅ **Do**: Keep skills self-contained with all needed information
+3. ✅ **Do**: Include code examples and quick reference tables
+4. ❌ **Don't**: Update `Docs/` files when creating skills
+5. ❌ **Don't**: Update `README.md` when creating skills
+6. ❌ **Don't**: Update `AGENTS.md` when creating skills
+7. ❌ **Don't**: Cross-reference skills in project documentation
+
+Skills are discovered automatically and should stand alone.
 
 ## Resources
 
 - **Specification**: https://agentskills.io/specification
 - **Examples**: https://github.com/anthropics/skills
 - **Reference Library**: https://github.com/agentskills/agentskills/tree/main/skills-ref
+- **Project Skills**: `.github/skills/` (view existing skills for examples)
