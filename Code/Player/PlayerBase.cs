@@ -4,7 +4,7 @@ using Sandbox;
 /// Core player component managing identity, progression, and state.
 /// Handles currency, health, skill tracking, and game system integration.
 /// </summary>
-public sealed class Player : Component
+public sealed class PlayerBase : Component
 {
 	// ===== PLAYER IDENTITY =====
 	[Property, Header("Player Identity"), Title("Name")]

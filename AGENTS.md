@@ -37,13 +37,61 @@ Update docs whenever:
 
 ## Project Structure
 
+### High-Level Layout
+
 ```
 Code/           → Runtime components (game logic)
 Editor/         → Editor-only tools (separate assembly)
 Assets/         → Scenes (.scene JSON), materials, models
 ProjectSettings/ → Input.config, Collision.config
-docs/           → Comprehensive documentation (keep updated!)
+Docs/           → Comprehensive documentation (keep updated!)
 ```
+
+### Recommended Shooter-Friendly Breakdown
+
+Describe the project as a layered collection of folders under `MyGame/`:
+
+- Place a single `README.md` at the root with project overview, setup, and contribution pointers.
+- Under `Assets/`, group every non-code artifact. Keep animation graphs in `animgraphs/`, fonts in `fonts/`, and level data inside `maps/`, where each map (for example `dm_arena/`) owns its own subfolder plus a shared `prefabs/` library for reusable level pieces such as doors. Split materials into `decals/`, `effects/`, and `world/`. Store models under `models/` with subfolders for `player`, `weapons`, `props`, and raw `animations`. Particle systems live in `particles/` (separate `weapons` vs `impacts`). Prefabs mirror gameplay concepts—`player/`, `equipment/`, `game_modes/`, `hud/`, `effects/`. Scenes sit in `scenes/`, with top-level menu scenes and a `maps/` child for playable environments. Round things out with dedicated folders for `shaders`, `sounds` (further divided into `weapons`, `player`, `ui`, `music`), `surfaces`, `ui` imagery (`icons`, `weapons`, `crosshairs`), and per-weapon data in `weapons/AK47`, `weapons/Pistol`, etc., each containing its `.equip`, view model prefab, and world model prefab.
+- Under `Code/`, organize gameplay logic. Keep `Assembly.cs` at the root for shared usings. `GameLoop/` owns `GameMode.cs`, `GameNetworkManager.cs`, `GameUtils.cs`, plus subfolders: `Rules/` (Events, FreezeTime, RoundLimit, TeamAssigner, and nested `Scoring/`, `Spawning/`, `Defuse/` modules), `Bots/` (BotController, BaseBotBehavior, and behavior-tree `Nodes/`), and `Globals/` for match-wide state. `PawnSystem/` stores `Pawn.cs`, persistent `Client.cs`, and a `Player/` folder (character controller, inventory, camera, crosshair, and `Damage/` logic). `Weapons/` contains `Equipment.cs`, `EquipmentResource.cs`, `ViewModel.cs`, `WorldModel.cs`, a `Components/` suite (Shootable, Reloadable, Aimable, Throwable, Melee), and grenade-specific logic in `Grenades/`. `UI/` includes `HUD/` (MainHUD, KillFeed, Scoreboard, BuyMenu, plus reusable `Components/`), `MenuSystem/`, `Minimap/`, and shared `Styles/`. Keep world-interaction code in `World/` (Zone, Door, PlayArea), map helpers in `Maps/` (MapInformation), persistence in `Stats/`, configurable knobs inside `Settings/` (GameSettingsSystem), and generic helpers in `Utils/`.
+- `Editor/` is reserved for editor-only tooling, typically grouped under `Tools/`.
+- `Libraries/` holds third-party dependencies such as `facepunch.libevents/`.
+- `ProjectSettings/` captures S&box configuration files like `Collision.config`, `Input.config`, and `Mixer.config`.
+
+### Key Folder Responsibilities
+
+- **GameLoop** – central authority for rules, modes, and shared game state.
+- **Rules** – opt-in behaviors (economy, scoring, spawning) that compose a mode.
+- **PawnSystem** – player and AI movement, inventory, and first-person feel.
+- **Weapons** – all firearm, melee, and throwable logic plus supporting data.
+- **Components** – weapon behavior mix-ins (shooting, reloading, aiming, etc.).
+- **HUD** – runtime UI exposed through Razor files.
+- **game_modes (Assets)** – prefabs defining rule sets playable by the engine.
+- **weapons (Assets)** – asset bundles per weapon (resource, view model, world model).
+
+### File Naming Conventions
+
+- Code files: `PascalCase.cs` (for example `PlayerInventory.cs`).
+- Razor components: `PascalCase.razor` (for example `KillFeed.razor`).
+- Stylesheets: `PascalCase.razor.scss` (for example `KillFeed.razor.scss`).
+- Prefabs: `snake_case.prefab` (for example `player_pawn.prefab`).
+- Equipment resources: `snake_case.equip` (for example `ak47.equip`).
+- Scenes: `snake_case.scene` (for example `dm_arena.scene`).
+
+### Minimal Playable Starter
+
+To hot-load a prototype, create eight essentials:
+
+1. `Code/GameLoop/GameMode.cs` – primary game controller.
+2. `Code/GameLoop/GameNetworkManager.cs` – networking bootstrap.
+3. `Code/PawnSystem/Pawn.cs` – base pawn implementation.
+4. `Code/PawnSystem/Client.cs` – persistent player state.
+5. `Code/UI/HUD/MainHUD.razor` – simple in-game HUD container.
+6. `Assets/prefabs/player/player.prefab` – networked player pawn asset.
+7. `Assets/prefabs/game_modes/deathmatch.prefab` – default game-mode prefab.
+8. `Assets/scenes/test.scene` (paired with `ProjectSettings/Input.config`) – launchable scene plus bindings.
+
+These assets and scripts are sufficient for hot-reload driven iteration.
 
 ## Component Pattern
 
