@@ -179,7 +179,7 @@ Skills are self-contained and should not require project documentation updates.
 | [component-attributes](.github/skills/component-attributes/) | S&box Component property attributes | Customizing inspector, organizing properties, adding constraints |
 | [sbox-ui-razor](.github/skills/sbox-ui-razor/) | Razor UI development (HTML/CSS/C#) | Building HUDs, menus, healthbars, interactive UI |
 | [sbox-triggers-collisions](.github/skills/sbox-triggers-collisions/) | Trigger & collision detection | Interactive zones, physics interactions, detecting enter/exit |
-| [sbox-gamemode-dev](.github/skills/sbox-gamemode-dev/) | S&box gamemode development | Building game modes, player systems, scoring |
+| [sbox-gamemode-dev](.github/skills/sbox-gamemode-dev/) | Beginner-friendly gamemode architecture | Learning S&box, Client/Pawn split, event-driven rules, weapons, bots |
 
 ### Adding New Skills
 
