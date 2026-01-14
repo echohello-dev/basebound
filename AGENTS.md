@@ -103,6 +103,45 @@ public static void OpenMyMenu() { }
 - **API**: https://sbox.game/api
 - **Global usings**: `Sandbox`, `System.Collections.Generic`, `System.Linq` ([Code/Assembly.cs](Code/Assembly.cs))
 
+## Agent Skills
+
+Agent skills are located in `.github/skills/` and follow the [agentskills.io specification](https://agentskills.io/specification).
+
+### Using Skills
+
+- **Creating skills**: Use the [agent-skill-authoring skill](.github/skills/agent-skill-authoring/)
+- **Location**: All skills must be in `.github/skills/<skill-name>/SKILL.md`
+- **Self-contained**: Skills should be standalone, no external doc updates required
+- **Discovery**: Skills are loaded automatically by agents that support the agentskills.io spec
+
+### Rules When Working on Skills
+
+**DO NOT modify** these files when creating or updating skills:
+- ❌ `Docs/` directory
+- ❌ `README.md`
+- ❌ `AGENTS.md` (except adding new skill to Available Skills list below)
+
+Skills are self-contained and should not require project documentation updates.
+
+### Available Skills
+
+| Skill | Purpose | Use When |
+|-------|---------|----------|
+| [agent-skill-authoring](.github/skills/agent-skill-authoring/) | Meta-skill for creating effective agent skills | Creating new skills, understanding skill format |
+| [component-attributes](.github/skills/component-attributes/) | S&box Component property attributes | Customizing inspector, organizing properties, adding constraints |
+| [sbox-ui-razor](.github/skills/sbox-ui-razor/) | Razor UI development (HTML/CSS/C#) | Building HUDs, menus, healthbars, interactive UI |
+| [sbox-triggers-collisions](.github/skills/sbox-triggers-collisions/) | Trigger & collision detection | Interactive zones, physics interactions, detecting enter/exit |
+| [sbox-gamemode-dev](.github/skills/sbox-gamemode-dev/) | S&box gamemode development | Building game modes, player systems, scoring |
+
+### Adding New Skills
+
+When adding a new skill to the project:
+
+1. Create skill directory: `.github/skills/<skill-name>/`
+2. Add `SKILL.md` with proper frontmatter (see agent-skill-authoring)
+3. **Optional**: Add entry to table above in AGENTS.md for visibility
+4. **Do NOT** update `Docs/`, `README.md`, or other project files
+
 ## Documentation Standards
 
 Keep documentation synchronized with code:
