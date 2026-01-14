@@ -6,33 +6,59 @@ using Sandbox;
 /// </summary>
 public sealed class Player : Component
 {
-	// Player Identity
-	[Property] public string PlayerName { get; set; } = "Player";
-	[Property] public int PlayerLevel { get; set; } = 1;
+	// ===== PLAYER IDENTITY =====
+	[Property, Header("Player Identity"), Title("Name")]
+	public string PlayerName { get; set; } = "Player";
 
-	// Economy System
-	[Property] public long Currency { get; set; } = 1000;
-	[Property] public long CurrencyPerTick { get; set; } = 5;
-	[Property] public bool IsTaxed { get; set; } = false;
+	[Property, Range(1, 100), Description("Player's current level")]
+	public int PlayerLevel { get; set; } = 1;
 
-	// Health & Status
-	[Property] public int MaxHealth { get; set; } = 100;
-	[Property] public int CurrentHealth { get; set; } = 100;
-	[Property] public bool IsAlive { get; set; } = true;
+	// ===== ECONOMY SYSTEM =====
+	[Property, Header("Economy System"), ReadOnly, Icon("payments")]
+	public long Currency { get; set; } = 1000;
 
-	// Progression & Skills
-	[Property] public int ContractsCompleted { get; set; } = 0;
-	[Property] public float SkillLevel { get; set; } = 1f;
-	[Property] public long TotalEarnings { get; set; } = 0;
+	[Property, Range(1, 1000), Title("Currency Per Second"), Description("Passive income rate")]
+	public long CurrencyPerTick { get; set; } = 5;
 
-	// Raid System
-	[Property] public bool IsRaidingNow { get; set; } = false;
-	[Property] public int RaidsInitiated { get; set; } = 0;
-	[Property] public int RaidsDefended { get; set; } = 0;
+	[Property, Icon("gavel")]
+	public bool IsTaxed { get; set; } = false;
 
-	// Base Building
-	[Property] public bool HasBase { get; set; } = false;
-	[Property] public int BlocksPlaced { get; set; } = 0;
+	[Property, ReadOnly, Title("Lifetime Earnings"), Icon("trending_up")]
+	public long TotalEarnings { get; set; } = 0;
+
+	// ===== HEALTH & STATUS =====
+	[Property, Header("Health & Status"), Range(1, 1000), Icon("favorite")]
+	public int MaxHealth { get; set; } = 100;
+
+	[Property, ReadOnly, Range(0, 1000), Icon("favorite_border")]
+	public int CurrentHealth { get; set; } = 100;
+
+	[Property, ReadOnly, Icon("health_and_safety")]
+	public bool IsAlive { get; set; } = true;
+
+	// ===== PROGRESSION & SKILLS =====
+	[Property, Header("Progression"), ReadOnly, Icon("assignment_turned_in")]
+	public int ContractsCompleted { get; set; } = 0;
+
+	[Property, ReadOnly, Range(1f, 100f), Title("Skill Level")]
+	public float SkillLevel { get; set; } = 1f;
+
+	// ===== RAID SYSTEM =====
+	[Property, Header("Raid System"), ReadOnly, Icon("security")]
+	public bool IsRaidingNow { get; set; } = false;
+
+	[Property, ReadOnly, Icon("shield")]
+	public int RaidsInitiated { get; set; } = 0;
+
+	[Property, ReadOnly, Icon("verified_user")]
+	public int RaidsDefended { get; set; } = 0;
+
+	// ===== BASE BUILDING =====
+	[Property, Header("Base Building"), ReadOnly, Icon("home")]
+	public bool HasBase { get; set; } = false;
+
+	[Property, ReadOnly, Icon("grid_on")]
+	public int BlocksPlaced { get; set; } = 0;
 
 	// State tracking
 	private float _currencyTickAccumulator = 0f;
