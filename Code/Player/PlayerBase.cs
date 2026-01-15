@@ -1,5 +1,7 @@
 using Sandbox;
 
+namespace Basebound.Player;
+
 /// <summary>
 /// Core player component managing identity, progression, and state.
 /// Handles currency, health, skill tracking, and game system integration.
@@ -15,7 +17,7 @@ public sealed class PlayerBase : Component
 
 	// ===== ECONOMY SYSTEM =====
 	[Property, Header("Economy System"), ReadOnly, Icon("payments")]
-	public long Currency { get; set; } = 1000;
+	[Sync] public long Currency { get; set; } = 1000;
 
 	[Property, Range(1, 1000), Title("Currency Per Second"), Description("Passive income rate")]
 	public long CurrencyPerTick { get; set; } = 5;
@@ -24,41 +26,46 @@ public sealed class PlayerBase : Component
 	public bool IsTaxed { get; set; } = false;
 
 	[Property, ReadOnly, Title("Lifetime Earnings"), Icon("trending_up")]
-	public long TotalEarnings { get; set; } = 0;
+	[Sync] public long TotalEarnings { get; set; } = 0;
 
 	// ===== HEALTH & STATUS =====
 	[Property, Header("Health & Status"), Range(1, 1000), Icon("favorite")]
 	public int MaxHealth { get; set; } = 100;
 
 	[Property, ReadOnly, Range(0, 1000), Icon("favorite_border")]
-	public int CurrentHealth { get; set; } = 100;
+	[Sync] public int CurrentHealth { get; set; } = 100;
 
 	[Property, ReadOnly, Icon("health_and_safety")]
-	public bool IsAlive { get; set; } = true;
+	[Sync] public bool IsAlive { get; set; } = true;
 
 	// ===== PROGRESSION & SKILLS =====
 	[Property, Header("Progression"), ReadOnly, Icon("assignment_turned_in")]
-	public int ContractsCompleted { get; set; } = 0;
+	[Sync] public int ContractsCompleted { get; set; } = 0;
 
 	[Property, ReadOnly, Range(1f, 100f), Title("Skill Level")]
-	public float SkillLevel { get; set; } = 1f;
+	[Sync] public float SkillLevel { get; set; } = 1f;
 
 	// ===== RAID SYSTEM =====
 	[Property, Header("Raid System"), ReadOnly, Icon("security")]
 	public bool IsRaidingNow { get; set; } = false;
 
 	[Property, ReadOnly, Icon("shield")]
-	public int RaidsInitiated { get; set; } = 0;
+	[Sync] public int RaidsInitiated { get; set; } = 0;
 
 	[Property, ReadOnly, Icon("verified_user")]
-	public int RaidsDefended { get; set; } = 0;
+	[Sync] public int RaidsDefended { get; set; } = 0;
 
 	// ===== BASE BUILDING =====
 	[Property, Header("Base Building"), ReadOnly, Icon("home")]
-	public bool HasBase { get; set; } = false;
+	[Sync] public bool HasBase { get; set; } = false;
 
 	[Property, ReadOnly, Icon("grid_on")]
-	public int BlocksPlaced { get; set; } = 0;
+	[Sync] public int BlocksPlaced { get; set; } = 0;
+
+	public float HealthPercent => MaxHealth == 0 ? 0f : (float)CurrentHealth / MaxHealth;
+	public bool IsCriticalHealth => CurrentHealth <= MaxHealth * 0.25f;
+	public string CurrencyFormatted => Currency.ToString("N0");
+	public string PassiveIncomeFormatted => $"+{CurrencyPerTick}/s";
 
 	// State tracking
 	private float _currencyTickAccumulator = 0f;

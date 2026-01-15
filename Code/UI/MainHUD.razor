@@ -1,19 +1,50 @@
 @using Sandbox;
 @using Sandbox.UI;
+@using Basebound.Player;
+@using Basebound.PawnSystem;
 @inherits PanelComponent
 @namespace Basebound.UI
 
+@if (!IsHudEnabled) return;
+
+@{
+	var viewer = Client.Viewer;
+	var player = Player;
+	var isValidPlayer = viewer.IsValid() && player.IsValid();
+}
+
 <root>
-	<div class="title">@MyStringValue</div>
+	<canvas>
+		@if (isValidPlayer)
+		{
+			@* <EconomyPanel Player="player" />
+		<HealthPanel Player="player" /> *@
+			<WeaponPanel Player="player" />
+		}
+		else
+		{
+			<div class="title muted">Waiting for player...</div>
+		}
+	</canvas>
 </root>
 
-@code
-{
+@code {
+	[Property]
+	public PlayerBase PreviewPlayer { get; set; }
 
-	[Property, TextArea] public string MyStringValue { get; set; } = "Hello World!";
+	[ConVar("bb_drawhud")]
+	public static bool IsHudEnabled { get; set; } = true;
+
+	PlayerBase Player =>
+	PreviewPlayer?.IsValid() == true
+	? PreviewPlayer
+	: Client.Viewer?.PlayerState;
 
 	/// <summary>
 	/// the hash determines if the system should be rebuilt. If it changes, it will be rebuilt
 	/// </summary>
-	protected override int BuildHash() => System.HashCode.Combine(MyStringValue);
+	protected override int BuildHash()
+	{
+		return System.HashCode.Combine(IsHudEnabled, Client.Viewer.IsValid(), Player.IsValid());
+	}
 }

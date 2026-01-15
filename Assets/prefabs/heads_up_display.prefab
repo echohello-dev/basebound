@@ -1,9 +1,9 @@
 {
   "RootObject": {
-    "__guid": "cdaa849f-2830-461d-865c-291126524154",
+    "__guid": "6732ab3e-8484-49f5-87ef-6994c81d5f8a",
     "__version": 2,
     "Flags": 0,
-    "Name": "hud",
+    "Name": "heads_up_display",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
@@ -17,7 +17,7 @@
     "Components": [
       {
         "__type": "Sandbox.ScreenPanel",
-        "__guid": "0e3ce665-fc00-479f-88b7-7661cf71cc72",
+        "__guid": "1297bbaa-ee07-4a16-a81d-54a8c3f57b39",
         "__enabled": true,
         "Flags": 0,
         "AutoScreenScale": true,
@@ -34,11 +34,24 @@
         "ZIndex": 100
       },
       {
-        "__type": "Sandbox.MainHUD",
-        "__guid": "9a95e0eb-1285-4796-93e7-c959676c72e1",
+        "__type": "Basebound.UI.MainHUD",
+        "__guid": "8c77aba8-e264-4a16-b99a-331e1c37c476",
         "__enabled": true,
-        "Flags": 512,
-        "MyStringValue": "Hello World!",
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
+        "PreviewPlayer": null
+      },
+      {
+        "__type": "Basebound.UI.DeveloperMenu",
+        "__guid": "a05e8bb1-6239-4995-9627-75939f2d8f39",
+        "__enabled": true,
+        "Flags": 0,
+        "MyStringValue": "",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -48,7 +61,7 @@
       },
       {
         "__type": "Sandbox.ScreenPanel",
-        "__guid": "09f504e8-21cd-4125-8ac2-239cb68b773c",
+        "__guid": "02917c75-64d5-4a04-b811-31359e6a9bf0",
         "__enabled": true,
         "Flags": 0,
         "AutoScreenScale": true,
@@ -65,21 +78,8 @@
         "ZIndex": 100
       },
       {
-        "__type": "Sandbox.DeveloperMenu",
-        "__guid": "741afd73-ef44-40c1-a0a4-0c0a232d95c7",
-        "__enabled": true,
-        "Flags": 0,
-        "MyStringValue": "Hello World!",
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
-      },
-      {
-        "__type": "Crosshair",
-        "__guid": "2777c437-918c-449b-acc0-944df205d26b",
+        "__type": "Basebound.UI.Crosshair",
+        "__guid": "15432a67-194d-4d56-9074-f674e6fc6019",
         "__enabled": true,
         "Flags": 0,
         "OnComponentDestroy": null,

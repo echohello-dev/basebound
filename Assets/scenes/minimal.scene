@@ -103,7 +103,7 @@
           "OnComponentStart": null,
           "OnComponentUpdate": null,
           "SkyIndirectLighting": true,
-          "SkyMaterial": "materials/skybox/skybox_day_01.vmat",
+          "SkyMaterial": "materials/skybox/skybox_workshop.vmat",
           "Tint": "1,1,1,1"
         },
         {
@@ -164,7 +164,11 @@
           "LodOverride": null,
           "MaterialGroup": null,
           "MaterialOverride": "materials/default.vmat",
-          "Materials": null,
+          "Materials": {
+            "indexed": {
+              "0": "dev/helper/testgrid.vmat"
+            }
+          },
           "Model": "models/dev/plane.vmdl",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
@@ -179,7 +183,7 @@
             "AfterUILayer": false
           },
           "RenderType": "On",
-          "Tint": "0.39546,0.51163,0.27128,1"
+          "Tint": "1,1,1,1"
         },
         {
           "__type": "Sandbox.BoxCollider",
@@ -215,7 +219,7 @@
       "__version": 2,
       "Flags": 0,
       "Name": "Cube",
-      "Position": "21.41682,74.1244,14.40159",
+      "Position": "73.56104,1.140335,14.40159",
       "Rotation": "0.00000001819328,-0.00000000000000008235059,0.3052325,0.952278",
       "Scale": "0.5632889,0.5632889,0.5632889",
       "Tags": "",
@@ -317,11 +321,11 @@
       "Children": []
     },
     {
-      "__guid": "523e3e8f-a4ec-4ec1-af9a-d86ffc9c17e1",
+      "__guid": "a275a03a-0982-402f-9d29-cea89c9ce5b1",
       "__version": 2,
       "Flags": 0,
       "Name": "Cube (1)",
-      "Position": "40.81348,46.97572,14.40159",
+      "Position": "48.64433,36.01524,14.4016",
       "Rotation": "0.00000001819328,-0.00000000000000008235059,0.3052325,0.952278",
       "Scale": "0.5632889,0.5632889,0.5632889",
       "Tags": "",
@@ -334,7 +338,7 @@
       "Components": [
         {
           "__type": "Sandbox.ModelRenderer",
-          "__guid": "9e8a546d-a41d-44b5-9906-22cea00e1066",
+          "__guid": "5dd76e06-7f16-4c51-8924-26cb920b1b6d",
           "__enabled": true,
           "Flags": 0,
           "BodyGroups": 18446744073709551615,
@@ -361,7 +365,7 @@
         },
         {
           "__type": "Sandbox.BoxCollider",
-          "__guid": "adf22580-7a25-4d7f-b1c3-3fb8fabf1612",
+          "__guid": "acce09c8-a2d1-4f2e-adef-0402e4753eb9",
           "__enabled": true,
           "Flags": 0,
           "Center": "0,0,0",
@@ -387,7 +391,7 @@
         },
         {
           "__type": "Sandbox.Rigidbody",
-          "__guid": "e53bfcb0-7f44-41d0-8d51-263bdc173a57",
+          "__guid": "a8f53e6b-3a49-4bae-bea9-5ff922bdb6ba",
           "__enabled": true,
           "Flags": 0,
           "AngularDamping": 0,
@@ -423,11 +427,11 @@
       "Children": []
     },
     {
-      "__guid": "5b483a09-bbf2-4949-98c7-a73b789d0ee7",
+      "__guid": "d0cdca25-c23b-43f9-a7ba-8005b3e4a3ac",
       "__version": 2,
       "Flags": 0,
       "Name": "Cube (2)",
-      "Position": "49.53707,34.08896,43.67614",
+      "Position": "59.79435,20.40904,59.89984",
       "Rotation": "0.00000001819328,-0.00000000000000008235059,0.3052325,0.952278",
       "Scale": "0.5632889,0.5632889,0.5632889",
       "Tags": "",
@@ -440,16 +444,16 @@
       "Components": [
         {
           "__type": "Sandbox.ModelRenderer",
-          "__guid": "ac284ab8-cdb7-4ba6-92de-d9be36088b1b",
+          "__guid": "edf0c096-9e45-47b0-b7a5-fc73a9abe7b0",
           "__enabled": true,
           "Flags": 0,
           "BodyGroups": 18446744073709551615,
           "CreateAttachments": false,
           "LodOverride": null,
           "MaterialGroup": null,
-          "MaterialOverride": "materials/default.vmat",
+          "MaterialOverride": "materials/default/white.vmat",
           "Materials": null,
-          "Model": "models/dev/box.vmdl",
+          "Model": "models/dev/sphere.vmdl",
           "OnComponentDestroy": null,
           "OnComponentDisabled": null,
           "OnComponentEnabled": null,
@@ -463,11 +467,11 @@
             "AfterUILayer": false
           },
           "RenderType": "On",
-          "Tint": "1,0,0.93333,1"
+          "Tint": "1,1,1,1"
         },
         {
           "__type": "Sandbox.BoxCollider",
-          "__guid": "ca4eb284-231e-4c84-9bc4-7ba89962f307",
+          "__guid": "2e55380e-a863-4ee8-9da4-51fea06c8c1e",
           "__enabled": true,
           "Flags": 0,
           "Center": "0,0,0",
@@ -493,7 +497,7 @@
         },
         {
           "__type": "Sandbox.Rigidbody",
-          "__guid": "61ef15dd-3eb2-4f52-8b9a-315f477f79b7",
+          "__guid": "1f9bce0f-b0ed-4ee1-874a-27fec60abce4",
           "__enabled": true,
           "Flags": 0,
           "AngularDamping": 0,
@@ -970,7 +974,7 @@
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "295387e8-3686-49af-ab76-9b18ce981c3f"
+              "IdValue": "d254d3b0-d5f3-43ff-858c-d547698f6f52"
             },
             "Parent": {
               "Type": "GameObject",
@@ -980,31 +984,22 @@
             "ContainerProperty": "Children",
             "IsContainerArray": true,
             "Data": {
-              "__guid": "295387e8-3686-49af-ab76-9b18ce981c3f",
+              "__guid": "d254d3b0-d5f3-43ff-858c-d547698f6f52",
               "__version": 2,
-              "__Prefab": "prefabs/hud.prefab",
+              "__Prefab": "prefabs/heads_up_display.prefab",
               "__PrefabInstancePatch": {
                 "AddedObjects": [],
                 "RemovedObjects": [],
-                "PropertyOverrides": [
-                  {
-                    "Target": {
-                      "Type": "Component",
-                      "IdValue": "9a95e0eb-1285-4796-93e7-c959676c72e1"
-                    },
-                    "Property": "Flags",
-                    "Value": 0
-                  }
-                ],
+                "PropertyOverrides": [],
                 "MovedObjects": []
               },
               "__PrefabIdToInstanceId": {
-                "cdaa849f-2830-461d-865c-291126524154": "295387e8-3686-49af-ab76-9b18ce981c3f",
-                "0e3ce665-fc00-479f-88b7-7661cf71cc72": "24bc9f74-e368-4778-8253-965f8b540233",
-                "9a95e0eb-1285-4796-93e7-c959676c72e1": "0409923a-c3ab-4374-a06a-55164e5460a4",
-                "09f504e8-21cd-4125-8ac2-239cb68b773c": "7dc4af86-3702-460c-aeb8-65bf95fd2db3",
-                "741afd73-ef44-40c1-a0a4-0c0a232d95c7": "856e2b8a-4aa1-4fc1-8914-32753868f743",
-                "2777c437-918c-449b-acc0-944df205d26b": "1d64a389-ce9b-48b3-98b5-12c146947724"
+                "6732ab3e-8484-49f5-87ef-6994c81d5f8a": "d254d3b0-d5f3-43ff-858c-d547698f6f52",
+                "1297bbaa-ee07-4a16-a81d-54a8c3f57b39": "bc7f432c-16f3-4bb3-bed4-ebf988d18cdb",
+                "8c77aba8-e264-4a16-b99a-331e1c37c476": "b1cf66a9-e2fd-422c-b49e-cb1e73e377e6",
+                "a05e8bb1-6239-4995-9627-75939f2d8f39": "ae01b099-500d-4200-994e-7b20eea6208d",
+                "02917c75-64d5-4a04-b811-31359e6a9bf0": "a005c2c9-0284-4319-816c-b3d165a5a5fa",
+                "15432a67-194d-4d56-9074-f674e6fc6019": "14fd25a5-a357-4076-8537-a8ba93f278e0"
               }
             }
           }

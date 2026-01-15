@@ -5,7 +5,7 @@
   "Ident": "basebound",
   "Schema": 1,
   "IncludeSourceFiles": false,
-  "Resources": null,
+  "Resources": "/fonts/*\n/UI/*\nui/*.png",
   "PackageReferences": [],
   "EditorReferences": null,
   "Mounts": null,
