@@ -1,5 +1,6 @@
 @using Sandbox;
 @using Sandbox.UI;
+@using Basebound.UI;
 @using Basebound.Player;
 @using Basebound.PawnSystem;
 @inherits PanelComponent
@@ -9,7 +10,7 @@
 
 <root>
 	<canvas>
-		@if (Bridge.HasViewer)
+		@if (Bridge?.HasViewer ?? false)
 		{
 			<Vitals Bridge=@Bridge />
 		}
@@ -19,7 +20,7 @@
 		}
 
 		@* Spectate indicator *@
-		@if (Bridge.IsSpectating)
+		@if (Bridge?.IsSpectating ?? false)
 		{
 			<div class="spectate-indicator">Spectating: @Bridge.ViewerName</div>
 		}
@@ -27,7 +28,7 @@
 		@* Debug overlay - toggle with bb_debughud *@
 		@if (ShowDebugHud)
 		{
-			<div class="debug-panel">@Bridge.DebugInfo</div>
+			<DebugViewerPanel Bridge=@Bridge />
 		}
 	</canvas>
 </root>
@@ -54,9 +55,9 @@
 		return System.HashCode.Combine(
 		IsHudEnabled,
 		ShowDebugHud,
-		Bridge.HasViewer,
-		Bridge.CurrentHealth,
-		Bridge.IsSpectating
+		Bridge?.HasViewer ?? false,
+		Bridge?.CurrentHealth ?? 0,
+		Bridge?.IsSpectating ?? false
 		);
 	}
 }

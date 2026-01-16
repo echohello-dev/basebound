@@ -1,0 +1,75 @@
+@using Sandbox;
+@using Sandbox.UI;
+@using Basebound.PawnSystem;
+@inherits Panel
+@attribute [StyleSheet]
+@namespace Basebound.UI
+
+<root class="debug-viewer-panel">
+	<div class="title">HUD Debug</div>
+
+	<div class="row">
+		<span class="key">Local</span>
+		<span class="value @(LocalClient.IsValid() ? "ok" : "bad")">@(LocalClient.IsValid() ? "valid" : "null")</span>
+	</div>
+
+	<div class="row">
+		<span class="key">Viewer</span>
+		<span class="value @(ViewerClient.IsValid() ? "ok" : "bad")">@(ViewerClient.IsValid() ? $"valid ({ViewerClient.DisplayName})" : "null")</span>
+	</div>
+
+	<div class="row">
+		<span class="key">Viewer.PlayerState</span>
+		<span class="value @(ViewerPlayer.IsValid() ? "ok" : "bad")">@(ViewerPlayer.IsValid() ? "valid" : "null")</span>
+	</div>
+
+	<div class="row">
+		<span class="key">Viewer.Pawn</span>
+		<span class="value @(ViewerPawn.IsValid() ? "ok" : "bad")">@(ViewerPawn.IsValid() ? ViewerPawn.GetType().Name :
+						"null")</span>
+	</div>
+
+	<div class="row">
+		<span class="key">Bridge</span>
+		<span class="value @(Bridge.IsValid() ? "ok" : "bad")">@(Bridge.IsValid() ? "valid" : "null")</span>
+	</div>
+
+	@if (Bridge.IsValid())
+	{
+		<div class="row">
+			<span class="key">Bridge.HasViewer</span>
+			<span class="value @(Bridge.HasViewer ? "ok" : "bad")">@Bridge.HasViewer</span>
+		</div>
+
+		<div class="row">
+			<span class="key">Bridge.IsSpectating</span>
+			<span class="value">@Bridge.IsSpectating</span>
+		</div>
+
+		<div class="row">
+			<span class="key">Health</span>
+			<span class="value">@Bridge.CurrentHealth/@Bridge.MaxHealth (@Bridge.HealthPercent.ToString("F0")%)</span>
+		</div>
+	}
+</root>
+
+@code
+{
+	public HudDataBridge Bridge { get; set; }
+
+	Client LocalClient => Client.Local;
+	Client ViewerClient => Client.Viewer;
+	Component ViewerPawn => ViewerClient?.Pawn;
+	Basebound.Player.PlayerBase ViewerPlayer => ViewerClient?.PlayerState;
+
+	protected override int BuildHash()
+	{
+		return System.HashCode.Combine(
+		LocalClient.IsValid(),
+		ViewerClient.IsValid(),
+		ViewerPawn.IsValid(),
+		ViewerPlayer.IsValid(),
+		Bridge.IsValid() ? Bridge.DebugInfo : ""
+		);
+	}
+}

@@ -7,6 +7,10 @@ indent_style = tab
 indent_size = 4
 tab_size = 4
 
+# S&box Razor panels are not Blazor components; suppress false-positive component-tag diagnostics.
+[*.razor]
+dotnet_diagnostic.RZ10012.severity = none
+
 # New line preferences
 end_of_line = crlf
 insert_final_newline = true

@@ -1,6 +1,12 @@
+// Intentionally blank.
+//
+// `HudDataBridge` lives in `Code/UI/HUD/HudDataBridge.cs`.
+// This file previously contained a duplicate definition and is kept only to avoid
+// breaking any existing file references or editor history.
 using Basebound.Player;
 using Basebound.PawnSystem;
 using Sandbox;
+using System;
 
 namespace Basebound.UI;
 
@@ -30,7 +36,7 @@ public sealed class HudDataBridge : Component
 
 	// ===== VIEWER INFO =====
 
-	/// <summary>x
+	/// <summary>
 	/// Whether we have a valid viewer to display data for.
 	/// </summary>
 	public bool HasViewer => ViewerClient.IsValid() && ViewerPlayer.IsValid();
@@ -50,7 +56,15 @@ public sealed class HudDataBridge : Component
 	/// <summary>
 	/// Current health as a percentage (0-100).
 	/// </summary>
-	public float HealthPercent => ViewerPlayer?.HealthPercent * 100f ?? 0f;
+	public float HealthPercent
+	{
+		get
+		{
+			var pct01 = ViewerPlayer.IsValid() ? ViewerPlayer.HealthPercent : 0f;
+			pct01 = Math.Clamp(pct01, 0f, 1f);
+			return pct01 * 100f;
+		}
+	}
 
 	/// <summary>
 	/// Current health value.

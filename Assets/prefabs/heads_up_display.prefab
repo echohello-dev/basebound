@@ -35,23 +35,9 @@
       },
       {
         "__type": "Basebound.UI.MainHUD",
-        "__guid": "8c77aba8-e264-4a16-b99a-331e1c37c476",
+        "__guid": "93d210d7-61c3-4f98-a3a3-e70d65cfd9bf",
         "__enabled": true,
         "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null,
-        "PreviewPlayer": null
-      },
-      {
-        "__type": "Basebound.UI.DeveloperMenu",
-        "__guid": "a05e8bb1-6239-4995-9627-75939f2d8f39",
-        "__enabled": true,
-        "Flags": 0,
-        "MyStringValue": "",
         "OnComponentDestroy": null,
         "OnComponentDisabled": null,
         "OnComponentEnabled": null,
@@ -78,8 +64,8 @@
         "ZIndex": 100
       },
       {
-        "__type": "Basebound.UI.Crosshair",
-        "__guid": "15432a67-194d-4d56-9074-f674e6fc6019",
+        "__type": "Basebound.UI.HudDataBridge",
+        "__guid": "09715e42-a6c0-478f-affd-b0ea15be22d7",
         "__enabled": true,
         "Flags": 0,
         "OnComponentDestroy": null,
