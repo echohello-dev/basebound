@@ -1,35 +1,37 @@
 @using Sandbox;
 @using Sandbox.UI;
-@inherits PanelComponent
+@inherits Panel
+@attribute [StyleSheet]
 @namespace Basebound.UI
 
 @* Health bar with visual feedback for damage/critical state *@
-<root class="vitals @(IsCritical ? "critical" : "")">
+@if ( !Bridge.IsValid() || !Bridge.HasViewer ) return;
+
+<root class="vitals @(Bridge.IsCriticalHealth ? "critical" : "")">
 	<div class="health-container">
 		<div class="health-bar">
-			<div class="health-fill" style="width: @(HealthPercent)%"></div>
+			<div class="health-fill" style="width: @(Bridge.HealthPercent)%"></div>
 		</div>
 		<div class="health-text">
-			<span class="current">@CurrentHealth</span>
+			<span class="current">@Bridge.CurrentHealth</span>
 			<span class="separator">/</span>
-			<span class="max">@MaxHealth</span>
+			<span class="max">@Bridge.MaxHealth</span>
 		</div>
 	</div>
 </root>
 
 @code {
-	/// <summary>
-	/// Reference to the HudDataBridge on the parent HUD GameObject.
-	/// </summary>
-	HudDataBridge Bridge => Components.GetInAncestorsOrSelf<HudDataBridge>();
-
-	float HealthPercent => Bridge?.HealthPercent ?? 100f;
-	int CurrentHealth => Bridge?.CurrentHealth ?? 100;
-	int MaxHealth => Bridge?.MaxHealth ?? 100;
-	bool IsCritical => Bridge?.IsCriticalHealth ?? false;
+	public HudDataBridge Bridge { get; set; }
 
 	protected override int BuildHash()
 	{
-		return System.HashCode.Combine(CurrentHealth, MaxHealth, IsCritical);
+		if ( !Bridge.IsValid() ) return 0;
+
+		return System.HashCode.Combine(
+			Bridge.HasViewer,
+			Bridge.CurrentHealth,
+			Bridge.MaxHealth,
+			Bridge.IsCriticalHealth
+		);
 	}
 }
