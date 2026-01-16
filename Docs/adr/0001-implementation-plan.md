@@ -1,106 +1,116 @@
 # Implementation Plan: Control Plane & HUD Bridge
 
 **Companion to**: [ADR 0001](0001-control-plane-and-hud-bridge.md)  
-**Created**: 2026-01-16
+**Created**: 2026-01-16  
+**Approach**: **Vertical Slice** (Option C) — Build one complete feature stack, then replicate
 
 ---
 
-## Dependency Graph
+## Strategy: Vertical Slice
+
+Instead of building infrastructure first (top-down) or wiring HUD ad-hoc (bottom-up), we build **ONE complete feature end-to-end** to prove the architecture, then replicate the pattern.
+
+### Why This Approach
+
+1. **Immediate proof** — See if the architecture works before committing
+2. **Reference implementation** — First slice becomes template to copy
+3. **Visible progress** — Health bar on screen by day 3
+4. **Catch issues early** — Viewer bugs surface during first slice, not later
+
+### The First Slice: Health Display
 
 ```
-                    ┌─────────────────┐
-                    │ 1. Viewer Audit │ ◄── START HERE (foundation)
-                    └────────┬────────┘
-                             │
-              ┌──────────────┼──────────────┐
-              ▼              ▼              ▼
-    ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
-    │ 2. Control  │  │ 3. Event    │  │ 5. Globals  │
-    │    Plane    │  │   Contract  │  │   Skeleton  │
-    └──────┬──────┘  └──────┬──────┘  └──────┬──────┘
-           │                │                │
-           └────────────────┼────────────────┘
-                            ▼
-                   ┌─────────────────┐
-                   │ 6. HUD Bridge   │ ◄── FIRST MILESTONE
-                   └────────┬────────┘
-                            │
-              ┌─────────────┼─────────────┐
-              ▼             ▼             ▼
-    ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
-    │ 4. Initial  │  │ 7. HUD      │  │ 8. Spectate │
-    │   Rules     │  │   Refactor  │  │   Testing   │
-    └─────────────┘  └─────────────┘  └─────────────┘
+┌─────────────────┐
+│ Player takes    │
+│ fall damage     │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ HealthComponent │  ← S&box built-in or custom
+│ .Health -= 10   │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ HudDataBridge   │  ← YOU BUILD THIS
+│ reads Viewer's  │
+│ pawn health     │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Vitals.razor    │  ← YOU BUILD THIS
+│ displays bar    │
+└─────────────────┘
 ```
 
----
-
-## Phased Approach
-
-### Phase 0: Validate Foundation (1-2 days)
-
-> **Goal**: Prove `Client.Local`/`Client.Viewer` works before building on it
-
-| Task | Deliverable | Success Criteria |
-|------|-------------|------------------|
-| Debug HUD widget | `DebugViewerPanel.razor` | Shows Local, Viewer, Pawn validity in real-time |
-| Manual test | Spawn → die → spectate | Values update correctly through state changes |
-| Fix any gaps | Client.cs tweaks | No nulls during transitions |
-
-**Why first**: Everything else assumes Viewer works. If it's broken, you'll build on sand.
+**Day 3 deliverable**: Health bar updates when you jump off a ledge.
 
 ---
 
-### Phase 1: Skeleton Layer (3-4 days)
+## Phased Approach (Slice-First)
 
-> **Goal**: Empty but connected infrastructure
+### Slice 1: Health Display (Days 1-5)
 
-| Task | Deliverable | Notes |
-|------|-------------|-------|
-| Event contract | `Code/GameLoop/Events/*.cs` | Just record definitions, no handlers yet |
-| Globals stubs | `Code/GameLoop/Globals/*.cs` | Empty components with `[Sync]` properties |
-| HUD Bridge shell | `HudDataBridge.cs` | Reads Viewer + one global, exposes to Razor |
-| StateMachine placeholder | Single "Playing" state | Real states come later |
+> **Goal**: One working vertical slice proving the entire data flow
 
-**Milestone check**: HUD reads health through bridge → bridge reads from pawn → pawn exists. No direct pawn access from Razor.
+| Day | Focus | Deliverable | Success Test |
+|-----|-------|-------------|--------------|
+| 1 | Debug widget | `DebugViewerPanel.razor` | Shows Local/Viewer/Pawn validity |
+| 2 | Fix Client statics | `Client.cs` updates | No nulls during spawn/die |
+| 3 | HUD Bridge | `HudDataBridge.cs` | Exposes `HealthPercent` property |
+| 4 | Vitals widget | `Vitals.razor` | Health bar renders |
+| 5 | Death/respawn QA | Manual testing | Bar resets on respawn, follows spectate |
 
----
-
-### Phase 2: First Vertical Slice (3-4 days)
-
-> **Goal**: One complete loop working end-to-end
-
-Pick **one feature** to prove the architecture:
-
-| Option A: Health Display | Option B: Round Timer |
-|--------------------------|----------------------|
-| Player takes damage | Timer counts down |
-| `PlayerDamagedEvent` dispatched | `RoundTimerGlobal` updates |
-| `HudDataBridge.HealthPercent` updates | `HudDataBridge.TimerText` updates |
-| `Vitals.razor` redraws | `RoundDisplay.razor` redraws |
-
-**Recommendation**: Start with Health—it's simpler and you can test by jumping off things.
+**Milestone**: Jump off ledge → health bar shrinks → die → spectate shows teammate's health.
 
 ---
 
-### Phase 3: Expand Horizontally (1 week)
+### Slice 2: Ammo Display (Days 6-8)
 
-> **Goal**: Add remaining globals/rules using proven pattern
+> **Goal**: Prove the pattern replicates
 
-| System | Global | Rule | HUD Widget |
-|--------|--------|------|------------|
-| Health/Armor | `PlayerVitalsGlobal` | — | `Vitals.razor` |
-| Round phase | `MatchPhaseGlobal` | `RoundTimerRule` | `RoundDisplay.razor` |
-| Team scores | `TeamScoreGlobal` | `EliminationScoringRule` | `Scoreboard.razor` |
-| Economy | `EconomySnapshotGlobal` | `EconomyTickRule` | `BuyMenu.razor` |
+| Day | Focus | Deliverable |
+|-----|-------|-------------|
+| 6 | Extend bridge | Add `CurrentAmmo`, `MaxAmmo` to bridge |
+| 7 | Ammo widget | `AmmoDisplay.razor` |
+| 8 | Integration | Shoot → ammo decrements → reload → refills |
 
-Each follows the same pattern—should get faster as you go.
+**Pattern validated**: If this goes faster than Slice 1, the architecture works.
 
 ---
 
-### Phase 4: Spectate Hardening (2-3 days)
+### Slice 3: Round Timer (Days 9-12)
 
-> **Goal**: Viewer swapping becomes reliable
+> **Goal**: Add first global + rule
+
+| Day | Focus | Deliverable |
+|-----|-------|-------------|
+| 9 | Timer global | `RoundTimerGlobal.cs` with `[Sync]` |
+| 10 | Timer rule | `RoundTimerRule.cs` ticks the global |
+| 11 | Bridge extension | Add `TimerText` to bridge |
+| 12 | Timer widget | `RoundTimer.razor` displays countdown |
+
+**New pattern introduced**: Global → Rule → Bridge → Widget
+
+---
+
+### Slice 4: Game Events (Days 13-15)
+
+> **Goal**: Add event system for reactive UI
+
+| Day | Focus | Deliverable |
+|-----|-------|-------------|
+| 13 | Event records | `PlayerDamagedEvent`, `PlayerKilledEvent` |
+| 14 | Kill feed | `KillFeed.razor` subscribes to kills |
+| 15 | Damage flash | HUD reacts to `PlayerDamagedEvent` |
+
+---
+
+### Slice 5: Spectate Hardening (Days 16-18)
+
+> **Goal**: Viewer swapping is bulletproof
 
 | Scenario | Test |
 |----------|------|
@@ -144,18 +154,36 @@ Person A (Gameplay):          Person B (UI):
 | Event bus | Facepunch `libevents` vs custom | **Use libevents** (HC1 uses it, less to build) |
 | Single vs nested state machines | One StateMachine with substates vs separate Match/Round | **Start single**, split if it gets complex |
 | Global granularity | One big `GameStateGlobal` vs many small | **Many small** — easier to sync/test independently |
+| Implementation approach | Top-down / Bottom-up / Vertical Slice | **Vertical Slice** — prove pattern with health, then replicate |
 
 ---
 
-## First Sprint (1 week)
+## Week 1 Sprint (Health Slice)
 
-| Day | Focus | Output |
-|-----|-------|--------|
-| 1 | Phase 0 | Debug widget working, Viewer validated |
-| 2 | Events + Globals stubs | Files created, compiles, does nothing |
-| 3 | HUD Bridge v1 | Reads Viewer health, exposes to Razor |
-| 4 | Wire MainHUD | Health displays through bridge |
-| 5 | Manual QA + fixes | Spawn/die/spectate all work |
+| Day | Focus | Deliverable | Done? |
+|-----|-------|-------------|-------|
+| 1 | Debug widget | `DebugViewerPanel.razor` showing Local/Viewer/Pawn | ☐ |
+| 2 | Fix Client statics | `Client.Local`/`Client.Viewer` work through spawn/die | ☐ |
+| 3 | HUD Bridge v1 | `HudDataBridge.cs` exposes `HealthPercent` | ☐ |
+| 4 | Vitals widget | `Vitals.razor` shows health bar | ☐ |
+| 5 | QA + spectate | Health updates on damage, follows viewer on death | ☐ |
+
+**Week 1 Success Criteria**: 
+- Jump off ledge → health bar shrinks
+- Die → spectate teammate → see THEIR health
+- Respawn → health resets to 100%
+
+---
+
+## Week 2 Sprint (Ammo + Timer)
+
+| Day | Focus | Deliverable | Done? |
+|-----|-------|-------------|-------|
+| 6 | Ammo bridge | Add `CurrentAmmo`, `MaxAmmo` to bridge | ☐ |
+| 7 | Ammo widget | `AmmoDisplay.razor` | ☐ |
+| 8 | Timer global | `RoundTimerGlobal.cs` | ☐ |
+| 9 | Timer rule | `RoundTimerRule.cs` | ☐ |
+| 10 | Timer widget | `RoundTimer.razor` | ☐ |
 
 ---
 
@@ -194,34 +222,39 @@ Code/
 
 ## Progress Checklist
 
-### Phase 0
+### Slice 1: Health Display (Week 1)
 - [ ] Create `DebugViewerPanel.razor`
 - [ ] Verify `Client.Local` assigned on spawn
 - [ ] Verify `Client.Viewer` swaps on spectate
 - [ ] Fix any null issues in Client.cs
-
-### Phase 1
-- [ ] Create `Code/GameLoop/Events/` folder
-- [ ] Define `PlayerSpawnedEvent`, `PlayerEliminatedEvent`
-- [ ] Create `Code/GameLoop/Globals/` folder
-- [ ] Stub `MatchPhaseGlobal.cs`
-- [ ] Create `HudDataBridge.cs` shell
+- [ ] Create `HudDataBridge.cs` with `HealthPercent`
 - [ ] Wire bridge to `heads_up_display.prefab`
+- [ ] Create `Vitals.razor` health bar
+- [ ] Test: damage → HUD updates
+- [ ] Test: death → spectate → HUD follows viewer
+- [ ] Test: respawn → health resets
 
-### Phase 2
-- [ ] Implement health reading through bridge
-- [ ] Update `MainHUD.razor` to use bridge
-- [ ] Test damage → HUD update flow
-- [ ] Remove direct pawn access from Razor
+### Slice 2: Ammo Display (Week 2, Days 1-3)
+- [ ] Add `CurrentAmmo`, `MaxAmmo` to `HudDataBridge`
+- [ ] Create `AmmoDisplay.razor`
+- [ ] Test: shoot → ammo decrements
+- [ ] Test: reload → ammo refills
 
-### Phase 3
-- [ ] Add `RoundTimerGlobal` + `RoundTimerRule`
-- [ ] Add `TeamScoreGlobal` + `EliminationScoringRule`
-- [ ] Add `EconomySnapshotGlobal`
-- [ ] Wire remaining HUD widgets
+### Slice 3: Round Timer (Week 2, Days 4-5)
+- [ ] Create `Code/GameLoop/Globals/RoundTimerGlobal.cs`
+- [ ] Create `Code/GameLoop/Rules/RoundTimerRule.cs`
+- [ ] Add `TimerText` to `HudDataBridge`
+- [ ] Create `RoundTimer.razor`
+- [ ] Test: timer counts down
 
-### Phase 4
-- [ ] Test death → spectate flow
+### Slice 4: Game Events (Week 3)
+- [ ] Create `Code/GameLoop/Events/PlayerEvents.cs`
+- [ ] Implement `PlayerDamagedEvent`, `PlayerKilledEvent`
+- [ ] Create `KillFeed.razor` subscribing to kills
+- [ ] Add damage flash effect to HUD
+
+### Slice 5: Spectate Hardening
+- [ ] Test death → spectate teammate flow
 - [ ] Test spectate → respawn flow
 - [ ] Test freecam (no pawn) gracefully
 - [ ] Document edge cases found

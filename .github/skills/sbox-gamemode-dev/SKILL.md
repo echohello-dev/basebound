@@ -49,6 +49,59 @@ Build skills in this order for shortest feedback loops:
 | 6 | Bot AI | Behaviour trees, input simulation |
 | 7 | Full Mode | Orchestrating multiple systems |
 
+## Recommended Learning Approach: Vertical Slices
+
+Instead of building layers (infrastructure → rules → UI), build **complete vertical slices**:
+
+### What is a Vertical Slice?
+
+A vertical slice touches every layer for ONE feature:
+
+```
+┌─────────────────┐
+│ Player takes    │  ← TRIGGER
+│ fall damage     │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ HealthComponent │  ← DATA LAYER
+│ .Health -= 10   │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ HudDataBridge   │  ← BRIDGE LAYER
+│ reads health    │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Vitals.razor    │  ← UI LAYER
+│ displays bar    │
+└─────────────────┘
+```
+
+### Why Vertical Slices Work Better
+
+| Approach | Problem |
+|----------|---------|
+| **Top-down** (build infra first) | Lots of empty files before anything works |
+| **Bottom-up** (wire UI ad-hoc) | May build wrong abstractions early |
+| **Vertical slice** | Proves architecture end-to-end immediately |
+
+### Suggested Slice Order
+
+| Slice | Feature | What You Learn |
+|-------|---------|----------------|
+| 1 | **Health display** | Client/Viewer split, HUD data binding |
+| 2 | **Ammo display** | Extending the bridge pattern |
+| 3 | **Round timer** | Globals + Rules + Bridge |
+| 4 | **Kill feed** | Event subscription in UI |
+| 5 | **Scoreboard** | Reading multiple clients' data |
+
+> **Key insight**: The first slice takes longest. Each subsequent slice reuses the pattern and goes faster.
+
 ## Core Architecture Patterns
 
 ### 1. GameMode as Orchestrator (Not God Object)
@@ -311,6 +364,78 @@ public void RequestBuyWeapon(string weaponId)
 | Crosshair feedback | Client | Responsiveness |
 
 ## UI with Razor Components
+
+### The HUD Data Bridge Pattern
+
+Don't let Razor components reach deep into game objects. Instead, use a **bridge component** that samples state and exposes HUD-friendly properties:
+
+```csharp
+// HudDataBridge.cs - Lives on HUD prefab
+public sealed class HudDataBridge : Component
+{
+    // Viewer's pawn (who we're watching)
+    private Pawn ViewerPawn => Client.Viewer?.Pawn as Pawn;
+    private HealthComponent Health => ViewerPawn?.HealthComponent;
+    
+    // HUD-friendly projections (no nulls, formatted strings)
+    public float HealthPercent => Health?.Health ?? 0f;
+    public bool HasPawn => ViewerPawn.IsValid();
+    public string ViewerName => Client.Viewer?.DisplayName ?? "Unknown";
+    
+    // Ammo (when you add weapons)
+    public int CurrentAmmo => 0; // TODO: read from equipped weapon
+    public int MaxAmmo => 0;
+    
+    // Timer (when you add round timer global)
+    public string TimerText => "0:00"; // TODO: read from RoundTimerGlobal
+}
+```
+
+### Razor Reads from Bridge
+
+```razor
+@inherits PanelComponent
+
+@{
+    var bridge = Scene.GetAllComponents<HudDataBridge>().FirstOrDefault();
+    if (bridge == null) return;
+}
+
+<root>
+    <div class="hud">
+        @if (bridge.HasPawn)
+        {
+            <div class="health-bar">
+                <div class="fill" style="width: @(bridge.HealthPercent)%"></div>
+            </div>
+            <label class="ammo">@bridge.CurrentAmmo / @bridge.MaxAmmo</label>
+        }
+        else
+        {
+            <div class="spectating">Spectating @bridge.ViewerName</div>
+        }
+    </div>
+</root>
+
+@code {
+    protected override int BuildHash()
+    {
+        var bridge = Scene.GetAllComponents<HudDataBridge>().FirstOrDefault();
+        return HashCode.Combine(bridge?.HealthPercent, bridge?.HasPawn, bridge?.CurrentAmmo);
+    }
+}
+```
+
+### Why This Pattern?
+
+| Without Bridge | With Bridge |
+|----------------|-------------|
+| UI reaches into `Client.Viewer.Pawn.HealthComponent.Health` | UI reads `bridge.HealthPercent` |
+| Null checks everywhere in Razor | Null handling in one place |
+| Hard to debug (which null broke?) | Log bridge values, verify before UI |
+| Tight coupling | Bridge is the contract |
+
+### Legacy Pattern (Still Works, Less Clean)
 
 ```razor
 @inherits PanelComponent
