@@ -11,8 +11,19 @@
 	<canvas>
 		@if (Bridge.HasViewer)
 		{
-			<Vitals />
-			@* <WeaponPanel Player="player" /> *@
+			@* Vitals - Health bar *@
+			<div class="vitals @(Bridge.IsCriticalHealth ? "critical" : "")">
+				<div class="health-container">
+					<div class="health-bar">
+						<div class="health-fill" style="width: @(Bridge.HealthPercent)%"></div>
+					</div>
+					<div class="health-text">
+						<span class="current">@Bridge.CurrentHealth</span>
+						<span class="separator">/</span>
+						<span class="max">@Bridge.MaxHealth</span>
+					</div>
+				</div>
+			</div>
 		}
 		else
 		{
@@ -53,11 +64,11 @@
 	protected override int BuildHash()
 	{
 		return System.HashCode.Combine(
-			IsHudEnabled,
-			ShowDebugHud,
-			Bridge.HasViewer,
-			Bridge.CurrentHealth,
-			Bridge.IsSpectating
+		IsHudEnabled,
+		ShowDebugHud,
+		Bridge.HasViewer,
+		Bridge.CurrentHealth,
+		Bridge.IsSpectating
 		);
 	}
 }
