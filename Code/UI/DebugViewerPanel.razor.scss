@@ -12,20 +12,19 @@
 	font-family: Consolas, monospace;
 	font-size: 11px;
 	color: rgba(255, 255, 255, 0.85);
+	display: flex;
+	align-items: center;
+	gap: 16px;
 
 	.title {
 		font-size: 12px;
 		font-weight: 700;
 		color: #a3e635;
-		margin-bottom: 6px;
 	}
 
 	.row {
-		display: flex;
 		justify-content: space-between;
-		gap: 10px;
-		line-height: 1.25;
-		margin: 2px 0;
+		gap: 8px;
 	}
 
 	.key {
@@ -35,7 +34,6 @@
 
 	.value {
 		text-align: right;
-		word-break: break-word;
 	}
 
 	.ok {
