@@ -121,6 +121,151 @@ Instead of building infrastructure first (top-down) or wiring HUD ad-hoc (bottom
 
 ---
 
+## Complete Vertical Slice Roadmap
+
+### Tier 1: Core HUD Foundation (Weeks 1-3)
+*Must have for any playable build*
+
+| # | Slice | Dependencies | Key Files | Est. Days |
+|---|-------|--------------|-----------|-----------|
+| 1 | **Health Display** | None | `HudDataBridge.cs`, `Vitals.razor` | 5 |
+| 2 | **Ammo Display** | Slice 1, Weapons | `AmmoDisplay.razor` | 3 |
+| 3 | **Round Timer** | Slice 1 | `RoundTimerGlobal.cs`, `RoundTimer.razor` | 4 |
+| 4 | **Kill Events** | Slice 1 | `PlayerEvents.cs`, `KillFeed.razor` | 3 |
+| 5 | **Spectate System** | Slice 1, 4 | `SpectateSystem.cs`, `Spectating.razor` | 3 |
+
+---
+
+### Tier 2: Game Loop & Economy (Weeks 4-6)
+*Required for a competitive mode*
+
+| # | Slice | Dependencies | Key Files | Est. Days |
+|---|-------|--------------|-----------|-----------|
+| 6 | **Round State Machine** | Slice 3 | `StateMachineComponent`, state prefabs | 4 |
+| 7 | **Team Assignment** | Slice 6 | `TeamAssignerRule.cs`, `TeamSelectMenu.razor` | 3 |
+| 8 | **Economy System** | Slice 6, 7 | `EconomyGlobal.cs`, `Balance.razor` | 4 |
+| 9 | **Buy Menu** | Slice 8 | `BuyZone.cs`, `BuyMenu.razor` | 5 |
+| 10 | **Scoreboard** | Slice 7 | `Scoreboard.razor`, `ScoreboardRow.razor` | 3 |
+
+---
+
+### Tier 3: Weapons & Combat (Weeks 7-9)
+*Core shooting experience*
+
+| # | Slice | Dependencies | Key Files | Est. Days |
+|---|-------|--------------|-----------|-----------|
+| 11 | **Equipment Resource** | None | `EquipmentResource.cs`, `.equip` files | 3 |
+| 12 | **Shootable Component** | Slice 11 | `Shootable.cs`, hit detection | 4 |
+| 13 | **Reloadable Component** | Slice 11, 12 | `Reloadable.cs` | 2 |
+| 14 | **Aimable Component** | Slice 11 | `Aimable.cs`, ADS camera | 3 |
+| 15 | **View Model** | Slice 11-14 | `ViewModel.cs`, animations | 4 |
+| 16 | **Dropped Weapons** | Slice 11 | `DroppedWeapon.cs`, pickup | 3 |
+
+---
+
+### Tier 4: Player Feedback (Weeks 10-11)
+*Juice and feel*
+
+| # | Slice | Dependencies | Key Files | Est. Days |
+|---|-------|--------------|-----------|-----------|
+| 17 | **Crosshair** | Slice 12 | `Crosshair.razor`, dynamic spread | 2 |
+| 18 | **Hit Markers** | Slice 4, 12 | `HitMarker.razor`, sounds | 2 |
+| 19 | **Damage Indicators** | Slice 4 | `DamageIndicator.razor`, directional | 3 |
+| 20 | **Death Cam** | Slice 5 | `Deathcam.razor`, killer focus | 3 |
+| 21 | **Toast System** | Slice 4 | `Toast.razor`, notifications | 2 |
+
+---
+
+### Tier 5: Advanced Systems (Weeks 12-14)
+*Polish and depth*
+
+| # | Slice | Dependencies | Key Files | Est. Days |
+|---|-------|--------------|-----------|-----------|
+| 22 | **Minimap** | Slice 7 | `Minimap.razor`, player dots | 5 |
+| 23 | **Voice Chat UI** | None | `Voices.razor`, speaking indicators | 2 |
+| 24 | **Chat System** | None | `Chat.razor`, `ChatBox.cs` | 3 |
+| 25 | **Bot Manager** | Slice 6, 12 | `BotManager.cs`, `BotController.cs` | 5 |
+| 26 | **Ragdolls** | Slice 4 | `PlayerRagdollBehavior.cs` | 2 |
+
+---
+
+### Tier 6: Mode-Specific Features (Weeks 15+)
+*Depends on your game mode*
+
+| # | Slice | Mode | Key Files | Est. Days |
+|---|-------|------|-----------|-----------|
+| 27 | **Bomb Defusal** | Defuse | `BombSite.cs`, `C4.cs`, `Defuse.razor` | 7 |
+| 28 | **Capture Points** | Control | `CaptureZone.cs`, `CaptureUI.razor` | 5 |
+| 29 | **Cash Grab** | Cash | `CashPickup.cs`, `CashGrabRule.cs` | 4 |
+| 30 | **Map Voting** | All | `MapVoteSystem.cs`, `MapVote.razor` | 4 |
+
+---
+
+## Slice Dependency Graph
+
+```
+                           ┌──────────────────┐
+                           │  1. Health       │ ◄── START
+                           └────────┬─────────┘
+                                    │
+              ┌─────────────────────┼─────────────────────┐
+              ▼                     ▼                     ▼
+     ┌────────────────┐    ┌────────────────┐    ┌────────────────┐
+     │  2. Ammo       │    │  3. Timer      │    │  4. Events     │
+     └────────────────┘    └───────┬────────┘    └───────┬────────┘
+                                   │                     │
+                                   ▼                     ▼
+                          ┌────────────────┐    ┌────────────────┐
+                          │  6. State      │    │  5. Spectate   │
+                          │    Machine     │    └────────────────┘
+                          └───────┬────────┘
+                                  │
+              ┌───────────────────┼───────────────────┐
+              ▼                   ▼                   ▼
+     ┌────────────────┐  ┌────────────────┐  ┌────────────────┐
+     │  7. Teams      │  │  8. Economy    │  │  25. Bots      │
+     └───────┬────────┘  └───────┬────────┘  └────────────────┘
+             │                   │
+             ▼                   ▼
+    ┌────────────────┐  ┌────────────────┐
+    │  10. Scoreboard│  │  9. Buy Menu   │
+    └────────────────┘  └────────────────┘
+
+         WEAPONS TRACK (parallel)
+    ┌────────────────┐
+    │  11. Resource  │
+    └───────┬────────┘
+            │
+    ┌───────┴───────┬───────────────┐
+    ▼               ▼               ▼
+┌────────┐   ┌────────────┐   ┌──────────┐
+│12.Shoot│   │ 13. Reload │   │ 14. Aim  │
+└───┬────┘   └────────────┘   └──────────┘
+    │
+    ▼
+┌────────────────┐
+│ 17. Crosshair  │
+│ 18. Hit Marker │
+└────────────────┘
+```
+
+---
+
+## Minimum Viable Gamemode
+
+To have a **playable deathmatch**, complete these slices:
+
+| Priority | Slices | Result |
+|----------|--------|--------|
+| **P0** | 1, 2, 3, 4, 5 | HUD works, can see health/ammo/timer/kills |
+| **P1** | 6, 11, 12, 13 | Round loop, guns that shoot |
+| **P2** | 7, 10, 17 | Teams, scoreboard, crosshair |
+| **P3** | Everything else | Polish |
+
+**P0 + P1 = ~25 days** to a playable prototype.
+
+---
+
 ## Risk Mitigation
 
 | Risk | Mitigation |
@@ -252,6 +397,68 @@ Code/
 - [ ] Implement `PlayerDamagedEvent`, `PlayerKilledEvent`
 - [ ] Create `KillFeed.razor` subscribing to kills
 - [ ] Add damage flash effect to HUD
+
+### Slice 5: Spectate System (Week 3)
+- [ ] Create `SpectateSystem.cs` singleton
+- [ ] Create `Spectating.razor` (shows who you're watching)
+- [ ] Test: death → spectate teammate
+- [ ] Test: spectate → respawn
+- [ ] Test: freecam (no pawn)
+
+### Slice 6: Round State Machine (Week 4)
+- [ ] Add `StateMachineComponent` to game mode prefab
+- [ ] Create Waiting/Preparing/Playing/End states
+- [ ] Create `MatchPhaseGlobal.cs`
+- [ ] Wire `RoundStateDisplay.razor`
+- [ ] Test: state transitions work
+
+### Slice 7: Team Assignment (Week 4)
+- [ ] Create `TeamAssignerRule.cs`
+- [ ] Create `TeamSelectMenu.razor`
+- [ ] Add team color to HUD elements
+- [ ] Test: join → assigned team → spawn on team side
+
+### Slice 8: Economy System (Week 5)
+- [ ] Create `EconomyGlobal.cs`
+- [ ] Create `EconomyRule.cs` (money on kill, round win)
+- [ ] Create `Balance.razor` (money display)
+- [ ] Test: kill → earn money → see balance
+
+### Slice 9: Buy Menu (Week 5)
+- [ ] Create `BuyZone.cs` trigger
+- [ ] Create `BuyMenu.razor`
+- [ ] Create `BuyMenuItem.cs`
+- [ ] Test: enter zone → open menu → buy weapon → money deducted
+
+### Slice 10: Scoreboard (Week 5)
+- [ ] Create `Scoreboard.razor`
+- [ ] Create `ScoreboardRow.razor`
+- [ ] Show all players, teams, K/D/A
+- [ ] Test: Tab → scoreboard → updates live
+
+### Slice 11-16: Weapons Track (Weeks 6-7)
+- [ ] Create `EquipmentResource.cs` base
+- [ ] Create first `.equip` file (pistol)
+- [ ] Implement `Shootable.cs`
+- [ ] Implement `Reloadable.cs`
+- [ ] Implement `Aimable.cs`
+- [ ] Create `ViewModel.cs`
+- [ ] Create `DroppedWeapon.cs`
+- [ ] Test: shoot → hit → damage → reload
+
+### Slice 17-21: Player Feedback (Week 8)
+- [ ] Create `Crosshair.razor` with dynamic spread
+- [ ] Create `HitMarker.razor`
+- [ ] Create `DamageIndicator.razor` (directional)
+- [ ] Create `Deathcam.razor`
+- [ ] Create `Toast.razor` notification system
+
+### Slice 22-26: Advanced Systems (Weeks 9-10)
+- [ ] Create `Minimap.razor` with player dots
+- [ ] Create `Voices.razor` speaking indicators
+- [ ] Create `Chat.razor` + `ChatBox.cs`
+- [ ] Create `BotManager.cs` + basic bot AI
+- [ ] Create `PlayerRagdollBehavior.cs`
 
 ### Slice 5: Spectate Hardening
 - [ ] Test death → spectate teammate flow
