@@ -7,44 +7,57 @@
 
 @if (!IsHudEnabled) return;
 
-@{
-	var viewer = Client.Viewer;
-	var player = Player;
-	var isValidPlayer = viewer.IsValid() && player.IsValid();
-}
-
 <root>
 	<canvas>
-		@if (isValidPlayer)
+		@if (Bridge.HasViewer)
 		{
-			@* <EconomyPanel Player="player" />
-		<HealthPanel Player="player" /> *@
-			<WeaponPanel Player="player" />
+			<Vitals />
+			@* <WeaponPanel Player="player" /> *@
 		}
 		else
 		{
 			<div class="title muted">Waiting for player...</div>
 		}
+
+		@* Spectate indicator *@
+		@if (Bridge.IsSpectating)
+		{
+			<div class="spectate-indicator">Spectating: @Bridge.ViewerName</div>
+		}
+
+		@* Debug overlay - toggle with bb_debughud *@
+		@if (ShowDebugHud)
+		{
+			<div class="debug-panel">@Bridge.DebugInfo</div>
+		}
 	</canvas>
 </root>
 
 @code {
-	[Property]
-	public PlayerBase PreviewPlayer { get; set; }
+	/// <summary>
+	/// Reference to the HudDataBridge on the same GameObject.
+	/// Razor panels should read from this bridge, not from game objects directly.
+	/// </summary>
+	[RequireComponent]
+	public HudDataBridge Bridge { get; set; }
 
 	[ConVar("bb_drawhud")]
 	public static bool IsHudEnabled { get; set; } = true;
 
-	PlayerBase Player =>
-	PreviewPlayer?.IsValid() == true
-	? PreviewPlayer
-	: Client.Viewer?.PlayerState;
+	[ConVar("bb_debughud")]
+	public static bool ShowDebugHud { get; set; } = false;
 
 	/// <summary>
-	/// the hash determines if the system should be rebuilt. If it changes, it will be rebuilt
+	/// The hash determines if the system should be rebuilt. If it changes, it will be rebuilt.
 	/// </summary>
 	protected override int BuildHash()
 	{
-		return System.HashCode.Combine(IsHudEnabled, Client.Viewer.IsValid(), Player.IsValid());
+		return System.HashCode.Combine(
+			IsHudEnabled,
+			ShowDebugHud,
+			Bridge.HasViewer,
+			Bridge.CurrentHealth,
+			Bridge.IsSpectating
+		);
 	}
 }

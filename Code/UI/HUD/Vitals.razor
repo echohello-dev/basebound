@@ -1,0 +1,35 @@
+@using Sandbox;
+@using Sandbox.UI;
+@inherits PanelComponent
+@namespace Basebound.UI
+
+@* Health bar with visual feedback for damage/critical state *@
+<root class="vitals @(IsCritical ? "critical" : "")">
+	<div class="health-container">
+		<div class="health-bar">
+			<div class="health-fill" style="width: @(HealthPercent)%"></div>
+		</div>
+		<div class="health-text">
+			<span class="current">@CurrentHealth</span>
+			<span class="separator">/</span>
+			<span class="max">@MaxHealth</span>
+		</div>
+	</div>
+</root>
+
+@code {
+	/// <summary>
+	/// Reference to the HudDataBridge on the parent HUD GameObject.
+	/// </summary>
+	HudDataBridge Bridge => Components.GetInAncestorsOrSelf<HudDataBridge>();
+
+	float HealthPercent => Bridge?.HealthPercent ?? 100f;
+	int CurrentHealth => Bridge?.CurrentHealth ?? 100;
+	int MaxHealth => Bridge?.MaxHealth ?? 100;
+	bool IsCritical => Bridge?.IsCriticalHealth ?? false;
+
+	protected override int BuildHash()
+	{
+		return System.HashCode.Combine(CurrentHealth, MaxHealth, IsCritical);
+	}
+}
