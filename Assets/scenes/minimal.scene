@@ -156,7 +156,7 @@
             "Data": {
               "__guid": "735f5ddb-d448-417c-afb8-1249d0e027ff",
               "__version": 2,
-              "__Prefab": "prefabs/player_state.prefab",
+              "__Prefab": "prefabs/player_client.prefab",
               "__PrefabInstancePatch": {
                 "AddedObjects": [],
                 "RemovedObjects": [],
@@ -227,7 +227,7 @@
               "OnComponentUpdate": null,
               "PlayerPrefab": {
                 "_type": "gameobject",
-                "prefab": "prefabs/player.prefab"
+                "prefab": "prefabs/player_pawn.prefab"
               },
               "SpawnPoints": [],
               "StartServer": true

@@ -3,7 +3,7 @@
     "__guid": "fd89b0ef-d118-4278-9fd9-67dfcde73bd2",
     "__version": 2,
     "Flags": 0,
-    "Name": "player",
+    "Name": "player_pawn",
     "Position": "0,0,0",
     "Rotation": "0,0,0,1",
     "Scale": "1,1,1",
