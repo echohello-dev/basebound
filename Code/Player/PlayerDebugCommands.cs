@@ -115,4 +115,77 @@ public static class PlayerDebugCommands
 
 		Log.Info($"bb_set_health: -> {player.CurrentHealth}/{player.MaxHealth} (IsAlive={player.IsAlive})");
 	}
+
+	[ConCmd("bb_consume_ammo")]
+	public static void ConsumeAmmo(int amount = 1)
+	{
+		amount = amount.Clamp(1, 999);
+
+		var player = GetLocalPlayerState();
+		if (player is null)
+		{
+			Log.Warning("bb_consume_ammo: no local PlayerState found (PlayerClient.Local is null?)");
+			return;
+		}
+
+		if (player.IsProxy)
+		{
+			Log.Warning("bb_consume_ammo: PlayerState is a proxy. Run this on the host/listen server to actually change ammo.");
+			return;
+		}
+
+		if (!player.ConsumeAmmo(amount))
+		{
+			Log.Warning($"bb_consume_ammo: not enough ammo (Current {player.CurrentAmmo}).");
+			return;
+		}
+
+		Log.Info($"bb_consume_ammo: {amount} -> {player.CurrentAmmo}/{player.MaxAmmo} (Reserve {player.ReserveAmmo})");
+	}
+
+	[ConCmd("bb_reload")]
+	public static void ReloadAmmo()
+	{
+		var player = GetLocalPlayerState();
+		if (player is null)
+		{
+			Log.Warning("bb_reload: no local PlayerState found (PlayerClient.Local is null?)");
+			return;
+		}
+
+		if (player.IsProxy)
+		{
+			Log.Warning("bb_reload: PlayerState is a proxy. Run this on the host/listen server to actually change ammo.");
+			return;
+		}
+
+		player.ReloadAmmo();
+		Log.Info($"bb_reload: -> {player.CurrentAmmo}/{player.MaxAmmo} (Reserve {player.ReserveAmmo})");
+	}
+
+	[ConCmd("bb_set_ammo")]
+	public static void SetAmmo(int current = 30, int reserve = 90, int max = 30)
+	{
+		var player = GetLocalPlayerState();
+		if (player is null)
+		{
+			Log.Warning("bb_set_ammo: no local PlayerState found (PlayerClient.Local is null?)");
+			return;
+		}
+
+		if (player.IsProxy)
+		{
+			Log.Warning("bb_set_ammo: PlayerState is a proxy. Run this on the host/listen server to actually change ammo.");
+			return;
+		}
+
+		max = max.Clamp(1, 999);
+		current = current.Clamp(0, max);
+		reserve = reserve.Clamp(0, 999);
+
+		player.MaxAmmo = max;
+		player.CurrentAmmo = current;
+		player.ReserveAmmo = reserve;
+		Log.Info($"bb_set_ammo: -> {player.CurrentAmmo}/{player.MaxAmmo} (Reserve {player.ReserveAmmo})");
+	}
 }

@@ -1,0 +1,91 @@
+/* Ammo display widget */
+
+.ammo-display {
+	position: absolute;
+	bottom: 24px;
+	right: 24px;
+
+	.ammo-container {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 4px;
+	}
+
+	.ammo-label {
+		font-size: 11px;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, 0.6);
+	}
+
+	.ammo-values {
+		display: flex;
+		align-items: baseline;
+		gap: 4px;
+		font-size: 22px;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+	}
+
+	.current {
+		color: white;
+		font-weight: 600;
+	}
+
+	.separator {
+		color: rgba(255, 255, 255, 0.5);
+		font-size: 16px;
+	}
+
+	.max {
+		color: rgba(255, 255, 255, 0.7);
+		font-size: 16px;
+	}
+
+	.reserve {
+		font-size: 12px;
+		color: rgba(255, 255, 255, 0.5);
+	}
+
+	.ammo-bullets {
+		display: flex;
+		gap: 4px;
+		flex-wrap: wrap;
+		max-width: 220px;
+		justify-content: flex-end;
+	}
+
+	.bullet {
+		width: 8px;
+		height: 18px;
+		border-radius: 3px;
+		background-color: #fcd34d;
+		box-shadow: 0 0 6px rgba(252, 211, 77, 0.45);
+		transition: opacity 0.2s ease, transform 0.2s ease;
+	}
+
+	.bullet.empty {
+		opacity: 0.2;
+		transform: scaleY(0.7);
+		box-shadow: none;
+	}
+
+	.bullet.eject {
+		animation: bullet-eject 0.45s ease-out forwards;
+	}
+}
+
+@keyframes bullet-eject {
+	0% {
+		opacity: 1;
+		transform: translateY(0) rotate(0deg) scale(1);
+	}
+	60% {
+		opacity: 0.8;
+		transform: translateY(-6px) rotate(18deg) scale(1.05);
+	}
+	100% {
+		opacity: 0;
+		transform: translateY(-16px) rotate(35deg) scale(0.9);
+	}
+}

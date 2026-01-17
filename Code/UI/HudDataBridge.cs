@@ -100,27 +100,28 @@ public sealed class HudDataBridge : Component
 	/// </summary>
 	public string PassiveIncomeFormatted => ViewerPlayerState?.PassiveIncomeFormatted ?? "+0/s";
 
-	// ===== AMMO (placeholder for weapons slice) =====
+	// ===== AMMO (temp PlayerState source for Slice 2) =====
 
 	/// <summary>
 	/// Current ammo in magazine.
 	/// </summary>
-	public int CurrentAmmo => 0; // TODO: Slice 2 - read from equipped weapon
+	public int CurrentAmmo => ViewerPlayerState?.CurrentAmmo ?? 0;
 
 	/// <summary>
 	/// Maximum ammo capacity.
 	/// </summary>
-	public int MaxAmmo => 0; // TODO: Slice 2 - read from equipped weapon
+	public int MaxAmmo => ViewerPlayerState?.MaxAmmo ?? 0;
 
 	/// <summary>
 	/// Reserve ammo count.
 	/// </summary>
-	public int ReserveAmmo => 0; // TODO: Slice 2 - read from equipped weapon
+	public int ReserveAmmo => ViewerPlayerState?.ReserveAmmo ?? 0;
 
 	/// <summary>
 	/// Whether the current weapon has ammo.
 	/// </summary>
 	public bool HasAmmo => CurrentAmmo > 0;
+
 
 	// ===== ROUND TIMER (placeholder for timer slice) =====
 

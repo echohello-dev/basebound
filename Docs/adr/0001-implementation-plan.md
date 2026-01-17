@@ -76,10 +76,17 @@
 
 **Checklist**
 
-- [ ] Surface current, max, and reserve ammo through `HudDataBridge`.
-- [ ] Expose ammo data from equipped weapon components.
-- [ ] Create `AmmoDisplay.razor` panel.
+- [x] Surface current, max, and reserve ammo through `HudDataBridge`.
+- [ ] Expose ammo data from equipped weapon components (temp source: `PlayerState`).
+- [x] Create `AmmoDisplay.razor` panel.
+- [x] Document shoot/reload keybinds for QA (default: `Attack1` = Mouse1, `Reload` = R; see `ProjectSettings/Input.config`).
 - [ ] QA: Fire and reload to validate ammo updates.
+
+**QA inputs (defaults)**
+
+- `Attack1` → Mouse1 (primary fire)
+- `Reload` → R
+- Full list: `ProjectSettings/Input.config`
 
 **Exit criteria**
 

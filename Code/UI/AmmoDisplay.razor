@@ -1,0 +1,103 @@
+@using Sandbox
+@using Sandbox.UI
+@inherits Panel
+@attribute [StyleSheet]
+@namespace Basebound.UI
+
+@if (!Bridge.IsValid() || !Bridge.HasViewer) return;
+
+<root class="ammo-display">
+	<div class="ammo-container">
+		<div class="ammo-label">AMMO</div>
+		<div class="ammo-values">
+			<span class="current">@Bridge.CurrentAmmo</span>
+			<span class="separator">/</span>
+			<span class="max">@Bridge.MaxAmmo</span>
+		</div>
+		<div class="reserve">@Bridge.ReserveAmmo</div>
+		<div class="ammo-bullets">
+			@for (var i = 0; i < BulletCount; i++)
+			{
+				var isFilled = i < Bridge.CurrentAmmo;
+				var isEjecting = IsEjecting && i == _ejectIndex;
+				var bulletClass = "bullet";
+
+				if (!isFilled)
+					bulletClass += " empty";
+
+				if (isEjecting)
+					bulletClass += " eject";
+
+				<div class="@bulletClass"></div>
+			}
+		</div>
+	</div>
+</root>
+
+@code
+{
+	private const float EjectDuration = 0.45f;
+	private const int MaxBulletSlots = 60;
+
+	public HudDataBridge Bridge { get; set; }
+
+	private int _lastAmmo;
+	private bool _hasLastAmmo;
+	private int _ejectIndex = -1;
+	private TimeSince _ejectTimer;
+
+	private int BulletCount => System.Math.Clamp(Bridge?.MaxAmmo ?? 0, 0, MaxBulletSlots);
+	private bool IsEjecting => _ejectIndex >= 0 && _ejectTimer < EjectDuration;
+
+	public override void Tick()
+	{
+		base.Tick();
+		UpdateEjectState();
+
+		if (IsEjecting)
+			StateHasChanged();
+	}
+
+	private void UpdateEjectState()
+	{
+		if (!(Bridge?.HasViewer ?? false))
+			return;
+
+		var currentAmmo = Bridge.CurrentAmmo;
+		if (!_hasLastAmmo)
+		{
+			_lastAmmo = currentAmmo;
+			_hasLastAmmo = true;
+			return;
+		}
+
+		if (currentAmmo < _lastAmmo)
+		{
+			_ejectIndex = currentAmmo;
+			_ejectTimer = 0f;
+		}
+		else if (currentAmmo > _lastAmmo)
+		{
+			_ejectIndex = -1;
+		}
+
+		_lastAmmo = currentAmmo;
+
+		if (_ejectIndex >= 0 && _ejectTimer >= EjectDuration)
+			_ejectIndex = -1;
+	}
+
+	protected override int BuildHash()
+	{
+		if (!Bridge.IsValid()) return 0;
+
+		return System.HashCode.Combine(
+		Bridge.HasViewer,
+		Bridge.CurrentAmmo,
+		Bridge.MaxAmmo,
+		Bridge.ReserveAmmo,
+		_ejectIndex,
+		IsEjecting
+		);
+	}
+}

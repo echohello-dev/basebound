@@ -20,7 +20,9 @@
 		@if (Bridge?.HasViewer ?? false)
 		{
 			<Vitals Bridge=@Bridge />
+			<AmmoDisplay Bridge=@Bridge />
 		}
+
 		else
 		{
 			<div class="title muted">Waiting for player...</div>
@@ -112,6 +114,7 @@
 		ShowDebugHud,
 		Bridge?.HasViewer ?? false,
 		Bridge?.CurrentHealth ?? 0,
+		Bridge?.CurrentAmmo ?? 0,
 		FlashOpacity,
 		FlashClass
 		);

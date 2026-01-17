@@ -46,6 +46,17 @@ public sealed class PlayerState : Component
 	[Property, ReadOnly, Icon("health_and_safety")]
 	[Sync] public bool IsAlive { get; set; } = true;
 
+	// ===== WEAPON AMMO (TEMP - Slice 2) =====
+	[Property, Header("Weapon Ammo (Temp)"), Range(1, 500), Title("Magazine Size"), Icon("inventory")]
+	public int MaxAmmo { get; set; } = 30;
+
+	[Property, ReadOnly, Range(0, 500), Title("Current Ammo"), Icon("inventory")]
+	[Sync] public int CurrentAmmo { get; set; } = 30;
+
+	[Property, ReadOnly, Range(0, 999), Title("Reserve Ammo"), Icon("inventory")]
+	[Sync] public int ReserveAmmo { get; set; } = 90;
+
+
 	// ===== PROGRESSION & SKILLS =====
 	[Property, Header("Progression"), ReadOnly, Icon("assignment_turned_in")]
 	[Sync] public int ContractsCompleted { get; set; } = 0;
@@ -74,6 +85,7 @@ public sealed class PlayerState : Component
 	public bool IsCriticalHealth => CurrentHealth <= MaxHealth * 0.25f;
 	public string CurrencyFormatted => Currency.ToString("N0");
 	public string PassiveIncomeFormatted => $"+{CurrencyPerTick}/s";
+
 
 	// State tracking
 	private float _currencyTickAccumulator = 0f;
@@ -138,6 +150,39 @@ public sealed class PlayerState : Component
 		TotalEarnings += amount;
 		BroadcastCurrencyUpdate();
 	}
+
+	/// <summary>
+	/// Attempts to consume ammo from the magazine.
+	/// </summary>
+	public bool ConsumeAmmo(int amount = 1)
+	{
+		if (amount <= 0 || CurrentAmmo < amount)
+			return false;
+
+		CurrentAmmo -= amount;
+		CurrentAmmo = System.Math.Max(CurrentAmmo, 0);
+		BroadcastAmmoUpdate();
+		return true;
+	}
+
+	/// <summary>
+	/// Reloads the magazine from reserve ammo.
+	/// </summary>
+	public void ReloadAmmo()
+	{
+		if (MaxAmmo <= 0)
+			return;
+
+		var missing = MaxAmmo - CurrentAmmo;
+		if (missing <= 0 || ReserveAmmo <= 0)
+			return;
+
+		var toLoad = System.Math.Min(missing, ReserveAmmo);
+		CurrentAmmo += toLoad;
+		ReserveAmmo -= toLoad;
+		BroadcastAmmoUpdate();
+	}
+
 
 	/// <summary>
 	/// Removes currency if player has sufficient balance.
@@ -319,7 +364,7 @@ public sealed class PlayerState : Component
 	[Rpc.Broadcast]
 	private void BroadcastCurrencyUpdate()
 	{
-		Log.Info($"{PlayerName} now has {Currency}");
+		// Log.Info($"{PlayerName} now has {Currency}");
 		// UI updates currency display
 	}
 
@@ -332,6 +377,17 @@ public sealed class PlayerState : Component
 		Log.Info($"{PlayerName} health: {CurrentHealth}/{MaxHealth}");
 		// UI updates health display
 	}
+
+	/// <summary>
+	/// Broadcasts ammo update to all clients.
+	/// </summary>
+	[Rpc.Broadcast]
+	private void BroadcastAmmoUpdate()
+	{
+		Log.Info($"{PlayerName} ammo: {CurrentAmmo}/{MaxAmmo} (Reserve {ReserveAmmo})");
+		// UI updates ammo display
+	}
+
 
 	/// <summary>
 	/// Broadcasts player death to all clients.
