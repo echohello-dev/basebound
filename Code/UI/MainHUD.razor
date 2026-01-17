@@ -9,7 +9,13 @@
 
 <root>
 	<canvas>
+		@if (FlashOpacity > 0f)
+		{
+			<div class="screen-flash @FlashClass" style="opacity: @FlashOpacity"></div>
+		}
+
 		<KillFeed />
+
 
 		@if (Bridge?.HasViewer ?? false)
 		{
@@ -42,6 +48,60 @@
 	[ConVar("bb_debughud")]
 	public static bool ShowDebugHud { get; set; } = false;
 
+	private float _flashOpacity;
+	private string _flashClass;
+	private int _lastHealth;
+	private bool _hasLastHealth;
+
+	private string FlashClass => _flashClass;
+	private float FlashOpacity => _flashOpacity;
+
+	protected override void OnUpdate()
+	{
+		base.OnUpdate();
+
+		UpdateHealthFlash();
+		UpdateFlashOpacity();
+	}
+
+	private void UpdateHealthFlash()
+	{
+		if (!(Bridge?.HasViewer ?? false))
+			return;
+
+		var currentHealth = Bridge.CurrentHealth;
+		if (!_hasLastHealth)
+		{
+			_lastHealth = currentHealth;
+			_hasLastHealth = true;
+			return;
+		}
+
+		if (currentHealth == _lastHealth)
+			return;
+
+		if (currentHealth < _lastHealth)
+			TriggerFlash("damage", 0.7f);
+		else
+			TriggerFlash("heal", 0.6f);
+
+		_lastHealth = currentHealth;
+	}
+
+	private void TriggerFlash(string flashClass, float intensity)
+	{
+		_flashClass = flashClass;
+		_flashOpacity = System.Math.Max(_flashOpacity, intensity);
+	}
+
+	private void UpdateFlashOpacity()
+	{
+		if (_flashOpacity <= 0f)
+			return;
+
+		_flashOpacity = System.Math.Max(0f, _flashOpacity - Time.Delta * 1.5f);
+	}
+
 	/// <summary>
 	/// The hash determines if the system should be rebuilt. If it changes, it will be rebuilt.
 	/// </summary>
@@ -51,7 +111,9 @@
 		IsHudEnabled,
 		ShowDebugHud,
 		Bridge?.HasViewer ?? false,
-		Bridge?.CurrentHealth ?? 0
+		Bridge?.CurrentHealth ?? 0,
+		FlashOpacity,
+		FlashClass
 		);
 	}
 }
