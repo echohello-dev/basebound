@@ -1,0 +1,79 @@
+@using Sandbox;
+@using Sandbox.UI;
+@using Basebound.GameLoop.Events;
+@inherits Panel
+@attribute [StyleSheet]
+@namespace Basebound.UI
+
+<root class="kill-feed">
+	@foreach (var entry in Entries)
+	{
+		<div class="entry">
+			<div class="killer">@entry.Killer</div>
+			<div class="method">@entry.Method</div>
+			<div class="victim">@entry.Victim</div>
+		</div>
+	}
+</root>
+
+@code
+{
+	private static KillFeed Instance { get; set; }
+	private static bool HookedToEvents { get; set; }
+
+	public KillFeed()
+	{
+		Instance = this;
+
+		// Hook once using a static handler so hot reload doesn't leak old instances.
+		if (!HookedToEvents)
+		{
+			HookedToEvents = true;
+			GameEvents.PlayerKilled += HandlePlayerKilled;
+		}
+	}
+
+	private static void HandlePlayerKilled(PlayerKilledEvent e)
+	{
+		if (!Instance.IsValid())
+			return;
+
+		Instance.AddEntry(e.KillerName, e.Method, e.VictimName);
+	}
+
+	public record KillFeedEntry(string Killer, string Method, string Victim, RealTimeSince TimeSinceAdded);
+
+	private List<KillFeedEntry> Entries { get; set; } = new();
+
+	private const float LifetimeSeconds = 8f;
+	private const int MaxEntries = 5;
+
+	private void AddEntry(string killer, string method, string victim)
+	{
+		killer = string.IsNullOrWhiteSpace(killer) ? "World" : killer;
+		victim = string.IsNullOrWhiteSpace(victim) ? "Unknown" : victim;
+		method = string.IsNullOrWhiteSpace(method) ? "killed" : method;
+
+		Entries.Add(new KillFeedEntry(killer, method, victim, 0));
+		Entries = Entries.TakeLast(MaxEntries).ToList();
+		StateHasChanged();
+	}
+
+	[ConCmd("bb_test_killfeed")]
+	public static void TestKillFeed(string killer = "You", string victim = "Them", string method = "test")
+	{
+		GameEvents.Raise(new PlayerKilledEvent(
+		0, victim ?? "Unknown",
+		0, killer ?? "World",
+		method
+		));
+	}
+
+	public override void Tick()
+	{
+		if (Entries.RemoveAll(x => x.TimeSinceAdded > LifetimeSeconds) > 0)
+		{
+			StateHasChanged();
+		}
+	}
+}

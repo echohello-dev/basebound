@@ -63,7 +63,12 @@ public sealed class Client : Component
 	/// <summary>
 	/// True when this component belongs to the local machine.
 	/// </summary>
-	public bool IsLocalPlayer => !IsProxy && Connection == Connection.Local;
+	/// <remarks>
+	/// In fully networked play this is a strict ownership check.
+	/// In early vertical-slice scenes (or editor-only prototypes) a Client may exist without
+	/// a network connection; in that case we treat the non-proxy instance as local so UI can function.
+	/// </remarks>
+	public bool IsLocalPlayer => !IsProxy && (Connection == Connection.Local || (Connection is null && !Local.IsValid()));
 
 	/// <summary>
 	/// Are we currently viewing this client?
@@ -76,6 +81,41 @@ public sealed class Client : Component
 
 		EnsureIdentityMetadata();
 		TryAssignStatics();
+		_wasAlive = PlayerState?.IsAlive ?? true;
+	}
+
+	protected override void OnUpdate()
+	{
+		base.OnUpdate();
+
+		// Viewer selection is a *local* concern. Proxies should never drive it.
+		if ( !IsLocalPlayer )
+			return;
+
+		// If viewer was cleared by a destroy on the spectate target, fall back to local.
+		if ( !Viewer.IsValid() && Local.IsValid() )
+		{
+			Viewer = Local;
+		}
+
+		if ( !PlayerState.IsValid() )
+			return;
+
+		var isAliveNow = PlayerState.IsAlive;
+
+		// Transition: alive -> dead
+		if ( _wasAlive && !isAliveNow )
+		{
+			TryAutoSpectateOnDeath();
+		}
+		// Transition: dead -> alive (respawn)
+		else if ( !_wasAlive && isAliveNow )
+		{
+			// Always return view to ourselves on respawn.
+			Viewer = this;
+		}
+
+		_wasAlive = isAliveNow;
 	}
 
 	protected override void OnDestroy()
@@ -107,18 +147,12 @@ public sealed class Client : Component
 
 		client.Pawn = pawn;
 
-		if (!pawn.IsValid())
-		{
-			return;
-		}
-
-		if (client.IsLocalPlayer)
+		// Possession changes should never allow remote clients to hijack the viewer.
+		// For the local machine, keep Local/Viewer pointed at our local client even if pawn is null
+		// (death / transition / respawn).
+		if ( client.IsLocalPlayer )
 		{
 			Local = client;
-			Viewer = client;
-		}
-		else if (Viewer == client)
-		{
 			Viewer = client;
 		}
 	}
@@ -131,6 +165,35 @@ public sealed class Client : Component
 		if (client.IsValid())
 		{
 			Viewer = client;
+		}
+	}
+
+	private bool _wasAlive = true;
+
+	private void TryAutoSpectateOnDeath()
+	{
+		// Only swap away if we're currently viewing ourselves.
+		if ( Viewer != this )
+			return;
+
+		// Find the first other alive client in the same scene.
+		var candidates = Scene?.GetAllComponents<Client>();
+		if ( candidates is null )
+			return;
+
+		foreach ( var other in candidates )
+		{
+			if ( !other.IsValid() || other == this )
+				continue;
+
+			if ( !other.PlayerState.IsValid() )
+				continue;
+
+			if ( other.PlayerState.IsAlive )
+			{
+				Viewer = other;
+				return;
+			}
 		}
 	}
 
@@ -149,18 +212,13 @@ public sealed class Client : Component
 
 	private void TryAssignStatics()
 	{
-		if (IsLocalPlayer)
+		if ( IsLocalPlayer )
 		{
 			Local = this;
 
-			if (!Viewer.IsValid())
-			{
+			// Viewer is a clientside concept - default it to our local client.
+			if ( !Viewer.IsValid() )
 				Viewer = this;
-			}
-		}
-		else if (!Viewer.IsValid())
-		{
-			Viewer = this;
 		}
 	}
 }

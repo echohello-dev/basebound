@@ -1,4 +1,6 @@
 using Sandbox;
+using Basebound.GameLoop.Events;
+using BBClient = Basebound.PawnSystem.Client;
 
 namespace Basebound.Player;
 
@@ -8,6 +10,12 @@ namespace Basebound.Player;
 /// </summary>
 public sealed class PlayerBase : Component
 {
+	private BBClient OwnerClient => GameObject?.Components?.Get<BBClient>();
+
+	private BBClient _lastDamageAttacker;
+	private string _lastDamageMethod;
+	private bool _deathDispatched;
+
 	// ===== PLAYER IDENTITY =====
 	[Property, Header("Player Identity"), Title("Name")]
 	public string PlayerName { get; set; } = "Player";
@@ -72,6 +80,10 @@ public sealed class PlayerBase : Component
 
 	protected override void OnStart()
 	{
+		_deathDispatched = false;
+		_lastDamageAttacker = null;
+		_lastDamageMethod = null;
+
 		// Validate health
 		CurrentHealth = System.Math.Min(CurrentHealth, MaxHealth);
 
@@ -87,6 +99,7 @@ public sealed class PlayerBase : Component
 		if (CurrentHealth <= 0 && IsAlive)
 		{
 			IsAlive = false;
+			DispatchKilledEvent();
 			BroadcastPlayerDeath();
 		}
 	}
@@ -144,11 +157,111 @@ public sealed class PlayerBase : Component
 	/// </summary>
 	public void TakeDamage(int damage)
 	{
+		TakeDamage(damage, null, null);
+	}
+
+	/// <summary>
+	/// Deals damage to the player, optionally providing an attacker and method.
+	/// </summary>
+	public void TakeDamage(int damage, BBClient attacker, string method)
+	{
 		if (!IsAlive || IsProxy) return;
+		if (damage <= 0) return;
+
+		_lastDamageAttacker = attacker;
+		_lastDamageMethod = method;
 
 		CurrentHealth -= damage;
 		CurrentHealth = System.Math.Max(CurrentHealth, 0);
+
+		DispatchDamagedEvent(damage, attacker, method);
 		BroadcastHealthUpdate();
+	}
+
+	private void DispatchDamagedEvent(int damage, BBClient attacker, string method)
+	{
+		var victimClient = OwnerClient;
+		if (!victimClient.IsValid())
+			return;
+
+		var victimSteamId = victimClient.SteamId;
+		var victimName = victimClient.DisplayName;
+
+		var attackerSteamId = attacker?.SteamId ?? 0;
+		var attackerName = attacker?.DisplayName ?? "World";
+
+		BroadcastPlayerDamagedEvent(
+			victimSteamId,
+			victimName,
+			attackerSteamId,
+			attackerName,
+			damage,
+			method
+		);
+	}
+
+	private void DispatchKilledEvent()
+	{
+		if (_deathDispatched)
+			return;
+
+		_deathDispatched = true;
+
+		var victimClient = OwnerClient;
+		if (!victimClient.IsValid())
+			return;
+
+		var victimSteamId = victimClient.SteamId;
+		var victimName = victimClient.DisplayName;
+
+		var killerSteamId = _lastDamageAttacker?.SteamId ?? 0;
+		var killerName = _lastDamageAttacker?.DisplayName ?? "World";
+
+		BroadcastPlayerKilledEvent(
+			victimSteamId,
+			victimName,
+			killerSteamId,
+			killerName,
+			_lastDamageMethod
+		);
+	}
+
+	[Rpc.Broadcast]
+	private void BroadcastPlayerDamagedEvent(
+		ulong victimSteamId,
+		string victimName,
+		ulong attackerSteamId,
+		string attackerName,
+		int damage,
+		string method
+	)
+	{
+		GameEvents.Raise(new PlayerDamagedEvent(
+			victimSteamId,
+			victimName,
+			attackerSteamId,
+			attackerName,
+			damage,
+			method
+		));
+	}
+
+	[Rpc.Broadcast]
+	private void BroadcastPlayerKilledEvent(
+		ulong victimSteamId,
+		string victimName,
+		ulong killerSteamId,
+		string killerName,
+		string method
+	)
+	{
+		GameEvents.Raise(new PlayerKilledEvent(
+			victimSteamId,
+			victimName,
+			killerSteamId,
+			killerName,
+			method
+		));
 	}
 
 	/// <summary>
