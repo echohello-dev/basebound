@@ -89,27 +89,29 @@ public sealed class Client : Component
 		base.OnUpdate();
 
 		// Viewer selection is a *local* concern. Proxies should never drive it.
-		if ( !IsLocalPlayer )
+		if (!IsLocalPlayer)
 			return;
 
 		// If viewer was cleared by a destroy on the spectate target, fall back to local.
-		if ( !Viewer.IsValid() && Local.IsValid() )
+		if (!Viewer.IsValid() && Local.IsValid())
 		{
 			Viewer = Local;
 		}
 
-		if ( !PlayerState.IsValid() )
+		if (!PlayerState.IsValid())
 			return;
 
 		var isAliveNow = PlayerState.IsAlive;
 
 		// Transition: alive -> dead
-		if ( _wasAlive && !isAliveNow )
+		if (_wasAlive && !isAliveNow)
 		{
-			TryAutoSpectateOnDeath();
+			// Spectating is intentionally disabled (gameplay: don't reveal bases/positions).
+			// Keep the view context on the local client.
+			Viewer = this;
 		}
 		// Transition: dead -> alive (respawn)
-		else if ( !_wasAlive && isAliveNow )
+		else if (!_wasAlive && isAliveNow)
 		{
 			// Always return view to ourselves on respawn.
 			Viewer = this;
@@ -150,7 +152,7 @@ public sealed class Client : Component
 		// Possession changes should never allow remote clients to hijack the viewer.
 		// For the local machine, keep Local/Viewer pointed at our local client even if pawn is null
 		// (death / transition / respawn).
-		if ( client.IsLocalPlayer )
+		if (client.IsLocalPlayer)
 		{
 			Local = client;
 			Viewer = client;
@@ -162,40 +164,13 @@ public sealed class Client : Component
 	/// </summary>
 	public static void SetViewer(Client client)
 	{
-		if (client.IsValid())
-		{
-			Viewer = client;
-		}
+		// Spectating is intentionally disabled (gameplay: don't reveal bases/positions).
+		// Force viewer to stay on the local client.
+		if (Local.IsValid())
+			Viewer = Local;
 	}
 
 	private bool _wasAlive = true;
-
-	private void TryAutoSpectateOnDeath()
-	{
-		// Only swap away if we're currently viewing ourselves.
-		if ( Viewer != this )
-			return;
-
-		// Find the first other alive client in the same scene.
-		var candidates = Scene?.GetAllComponents<Client>();
-		if ( candidates is null )
-			return;
-
-		foreach ( var other in candidates )
-		{
-			if ( !other.IsValid() || other == this )
-				continue;
-
-			if ( !other.PlayerState.IsValid() )
-				continue;
-
-			if ( other.PlayerState.IsAlive )
-			{
-				Viewer = other;
-				return;
-			}
-		}
-	}
 
 	private void EnsureIdentityMetadata()
 	{
@@ -212,12 +187,12 @@ public sealed class Client : Component
 
 	private void TryAssignStatics()
 	{
-		if ( IsLocalPlayer )
+		if (IsLocalPlayer)
 		{
 			Local = this;
 
 			// Viewer is a clientside concept - default it to our local client.
-			if ( !Viewer.IsValid() )
+			if (!Viewer.IsValid())
 				Viewer = this;
 		}
 	}

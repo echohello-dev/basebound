@@ -21,12 +21,6 @@
 			<div class="title muted">Waiting for player...</div>
 		}
 
-		@* Spectate indicator *@
-		@if (Bridge?.IsSpectating ?? false)
-		{
-			<div class="spectate-indicator">Spectating: @Bridge.ViewerName</div>
-		}
-
 		@* Debug overlay - toggle with bb_debughud *@
 		@if (ShowDebugHud)
 		{
@@ -58,8 +52,7 @@
 		IsHudEnabled,
 		ShowDebugHud,
 		Bridge?.HasViewer ?? false,
-		Bridge?.CurrentHealth ?? 0,
-		Bridge?.IsSpectating ?? false
+		Bridge?.CurrentHealth ?? 0
 		);
 	}
 }

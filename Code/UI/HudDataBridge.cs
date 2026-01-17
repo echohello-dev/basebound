@@ -49,7 +49,7 @@ public sealed class HudDataBridge : Component
 	/// <summary>
 	/// Whether we're spectating someone else (not our own client).
 	/// </summary>
-	public bool IsSpectating => HasViewer && ViewerClient != Client.Local;
+	public bool IsSpectating => false;
 
 	// ===== HEALTH =====
 
