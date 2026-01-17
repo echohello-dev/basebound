@@ -1,24 +1,23 @@
-using Basebound.Player;
 using Sandbox;
 
-namespace Basebound.PawnSystem;
+namespace Basebound.Player;
 
 /// <summary>
 /// Networked representation of a connected player.
 /// Mirrors the Facepunch hc1 pattern with Local/Viewer statics so UI and gameplay
 /// systems have a single source of truth for "who are we" information.
 /// </summary>
-public sealed class Client : Component
+public sealed class PlayerClient : Component
 {
 	/// <summary>
 	/// The client whose perspective we are currently rendering on this machine.
 	/// </summary>
-	public static Client Viewer { get; private set; }
+	public static PlayerClient Viewer { get; private set; }
 
 	/// <summary>
 	/// The client object owned by this machine (if any).
 	/// </summary>
-	public static Client Local { get; private set; }
+	public static PlayerClient Local { get; private set; }
 
 	/// <summary>
 	/// Steam identifier for this connection. Synced from the host.
@@ -42,7 +41,7 @@ public sealed class Client : Component
 	/// Main gameplay state for this client.
 	/// </summary>
 	[RequireComponent]
-	public PlayerBase PlayerState { get; private set; }
+	public PlayerState PlayerState { get; private set; }
 
 	/// <summary>
 	/// The currently possessed pawn (player character, drone, etc.).
@@ -139,7 +138,7 @@ public sealed class Client : Component
 	/// Called by the pawn/controller layer whenever possession changes.
 	/// Updates local/client static references and ensures UI follows the current view target.
 	/// </summary>
-	public static void OnPossess(Client client, Component pawn)
+	public static void OnPossess(PlayerClient client, Component pawn)
 	{
 		if (!client.IsValid())
 		{
@@ -162,7 +161,7 @@ public sealed class Client : Component
 	/// <summary>
 	/// Helper for the local machine to switch viewer context (spectating, cameras, etc.).
 	/// </summary>
-	public static void SetViewer(Client client)
+	public static void SetViewer(PlayerClient client)
 	{
 		// Spectating is intentionally disabled (gameplay: don't reveal bases/positions).
 		// Force viewer to stay on the local client.

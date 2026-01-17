@@ -58,7 +58,7 @@ Instead of building infrastructure first (top-down) or wiring HUD ad-hoc (bottom
 | Day | Focus | Deliverable | Success Test |
 |-----|-------|-------------|--------------|
 | 1 | Debug widget | `DebugViewerPanel.razor` | Shows Local/Viewer/Pawn validity |
-| 2 | Fix Client statics | `Client.cs` updates | No nulls during spawn/die |
+| 2 | Fix Client statics | `PlayerClient.cs` updates | No nulls during spawn/die |
 | 3 | HUD Bridge | `HudDataBridge.cs` | Exposes `HealthPercent` property |
 | 4 | Vitals widget | `Vitals.razor` | Health bar renders |
 | 5 | Death/respawn QA | Manual testing | Bar resets on respawn, follows spectate |
@@ -308,7 +308,7 @@ Person A (Gameplay):          Person B (UI):
 | Day | Focus | Deliverable | Done? |
 |-----|-------|-------------|-------|
 | 1 | Debug widget | `DebugViewerPanel.razor` showing Local/Viewer/Pawn | ☐ |
-| 2 | Fix Client statics | `Client.Local`/`Client.Viewer` work through spawn/die | ☐ |
+| 2 | Fix Client statics | `PlayerClient.Local`/`PlayerClient.Viewer` work through spawn/die | ☐ |
 | 3 | HUD Bridge v1 | `HudDataBridge.cs` exposes `HealthPercent` | ☐ |
 | 4 | Vitals widget | `Vitals.razor` shows health bar | ☐ |
 | 5 | QA + spectate | Health updates on damage, follows viewer on death | ☐ |
@@ -353,7 +353,7 @@ Code/
 │       ├── RoundTimerRule.cs
 │       └── EliminationScoringRule.cs
 ├── PawnSystem/
-│   └── Client.cs                  # (existing)
+│   └── PlayerClient.cs                  # (existing)
 ├── UI/
 │   ├── HUD/
 │   │   ├── HudDataBridge.cs       # NEW: The bridge component
@@ -369,9 +369,9 @@ Code/
 
 ### Slice 1: Health Display (Week 1)
 - [ ] Create `DebugViewerPanel.razor`
-- [ ] Verify `Client.Local` assigned on spawn
-- [ ] Verify `Client.Viewer` swaps on spectate
-- [ ] Fix any null issues in Client.cs
+- [ ] Verify `PlayerClient.Local` assigned on spawn
+- [ ] Verify `PlayerClient.Viewer` swaps on spectate
+- [ ] Fix any null issues in PlayerClient.cs
 - [ ] Create `HudDataBridge.cs` with `HealthPercent`
 - [ ] Wire bridge to `heads_up_display.prefab`
 - [ ] Create `Vitals.razor` health bar
@@ -472,5 +472,5 @@ Code/
 
 - [ADR 0001](0001-control-plane-and-hud-bridge.md) — The decision document
 - [HC1 GameMode.cs](../../sbox-hc1/Code/GameLoop/GameMode.cs) — Reference implementation
-- [HC1 Client.cs](../../sbox-hc1/Code/PawnSystem/Client.cs) — Viewer pattern reference
+- [HC1 PlayerClient.cs](../../sbox-hc1/Code/PawnSystem/PlayerClient.cs) — Viewer pattern reference
 - [HC1 Events.cs](../../sbox-hc1/Code/GameLoop/Rules/Events.cs) — Event definitions

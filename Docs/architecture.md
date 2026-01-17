@@ -98,7 +98,7 @@ Code/               → Runtime components (game logic)
   ├── Assembly.cs  → Global usings
   ├── MyComponent.cs → Component template
   ├── PawnSystem/
-  │   └── Client.cs → Networked player ownership (Local/Viewer statics)
+  │   └── PlayerClient.cs → Networked player ownership (Local/Viewer statics)
   └── Properties/  → Launch settings
 
 Editor/             → Editor-only tools (separate assembly)
@@ -119,10 +119,10 @@ ProjectSettings/    → Engine configuration
 
 ## Pawn System Overview
 
-- **Client Component** (`Code/PawnSystem/Client.cs`)
-  - `[RequireComponent]`s `PlayerBase` so every networked player object carries persistent stats plus connection metadata.
-  - Exposes `Client.Local` and `Client.Viewer` statics mirroring the hc1 pattern, letting UI elements and gameplay systems query the active viewpoint without scanning the scene.
-  - Provides `Client.OnPossess( client, pawn )` for controllers to call whenever possession changes, keeping `Viewer` synchronized (spectating, respawn flows, etc.).
+- **Client Component** (`Code/PawnSystem/PlayerClient.cs`)
+  - `[RequireComponent]`s `PlayerState` so every networked player object carries persistent stats plus connection metadata.
+  - Exposes `PlayerClient.Local` and `PlayerClient.Viewer` statics mirroring the hc1 pattern, letting UI elements and gameplay systems query the active viewpoint without scanning the scene.
+  - Provides `PlayerClient.OnPossess( client, pawn )` for controllers to call whenever possession changes, keeping `Viewer` synchronized (spectating, respawn flows, etc.).
   - Stores connection identifiers (`SteamId`, `DisplayName`) via `[Sync]` so scoreboards and HUD elements share the same data set.
 
 ## Editor Extensions

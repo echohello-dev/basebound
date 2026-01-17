@@ -20,21 +20,21 @@ Adopt HC1's four-layer stack, reimagined for Basebound:
 3. **Global State Surface** (`Code/GameLoop/Globals/…`)
    - Replicated components that hold queryable facts (phase, round timer, team scores, money snapshots). They form the HUD/API boundary; only globals may be read by UI/bridges.
 4. **HUD Data Bridge** (`Code/UI/HUD/HudDataBridge.cs` + Razor)
-   - A dedicated component samples `Client.Viewer`, `ViewerPawn`, and globals, exposing HUD-friendly projections (health %, phase text, timer strings). Razor panels (`MainHUD.razor`, `DeveloperMenu.razor`) consume the bridge rather than world objects.
+   - A dedicated component samples `PlayerClient.Viewer`, `ViewerPawn`, and globals, exposing HUD-friendly projections (health %, phase text, timer strings). Razor panels (`MainHUD.razor`, `DeveloperMenu.razor`) consume the bridge rather than world objects.
 
-This explicitly reinforces the Client/Pawn split: `Client.Local` answers "who owns input," `Client.Viewer` answers "whose perspective is rendered." HUD begins at the viewer, so spectating, death cams, and freecam share the same path.
+This explicitly reinforces the Client/Pawn split: `PlayerClient.Local` answers "who owns input," `PlayerClient.Viewer` answers "whose perspective is rendered." HUD begins at the viewer, so spectating, death cams, and freecam share the same path.
 
 ## Rationale
 
 - **Authority clarity**: Rules mutate globals; HUD only reads projections, preventing "UI authority leaks" and inconsistent displays during replication delay.
-- **Spectate-first UI**: By treating `Client.Viewer` as the HUD root, spectating is the default, reducing bespoke HUD patches when the viewer changes.
+- **Spectate-first UI**: By treating `PlayerClient.Viewer` as the HUD root, spectating is the default, reducing bespoke HUD patches when the viewer changes.
 - **Modularity**: Each rule is testable and replaceable. GameMode just wires rules and state transitions, keeping it from becoming a God object.
 - **Diagnostics**: A narrow set of globals makes debugging simpler (log the globals + viewer, verify lens before diving into UI widgets).
 
 ## Implementation Plan
 
 1. **Viewer Correctness Audit**
-   - Ensure `Client.Local`/`Client.Viewer` swap cleanly across spawn, death, and spectate. Add a debug HUD widget that prints Local, Viewer, ViewerPawn validity, and a couple of global values.
+   - Ensure `PlayerClient.Local`/`PlayerClient.Viewer` swap cleanly across spawn, death, and spectate. Add a debug HUD widget that prints Local, Viewer, ViewerPawn validity, and a couple of global values.
 2. **Control Plane Skeleton**
    - Add `GameLoop/GameMode.cs`, `GameNetworkManager.cs`, and `StateMachineComponent.cs` (Warmup → Playing → End). GameMode spawns the state machine plus default rules listed in prefab metadata.
 3. **Event Contract**
@@ -44,7 +44,7 @@ This explicitly reinforces the Client/Pawn split: `Client.Local` answers "who ow
 5. **Global Truth Holders**
    - Add `MatchPhaseGlobal`, `RoundTimerGlobal`, `TeamScoreGlobal`, `EconomySnapshotGlobal` in `GameLoop/Globals/`. These are server-authoritative, replicated, and contain zero HUD-specific formatting.
 6. **HUD Data Bridge**
-   - Introduce `HudDataBridge` (likely attached to the `HeadsUpDisplay` prefab) that samples globals plus `Client.Viewer`. Expose sanitized properties (floats, strings, formatted timers) consumed by Razor.
+   - Introduce `HudDataBridge` (likely attached to the `HeadsUpDisplay` prefab) that samples globals plus `PlayerClient.Viewer`. Expose sanitized properties (floats, strings, formatted timers) consumed by Razor.
 7. **HUD Refactor**
    - Update `MainHUD.razor`, `DeveloperMenu.razor`, and future panels to call into `HudDataBridge` instead of pawns/rules directly. Document the "HUD-approved" fields in `Docs/architecture.md`.
 8. **Spectate Regression + Tooling**

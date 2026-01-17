@@ -1,6 +1,6 @@
 using Sandbox;
 using Basebound.GameLoop.Events;
-using BBClient = Basebound.PawnSystem.Client;
+using BBClient = Basebound.Player.PlayerClient;
 
 namespace Basebound.Player;
 
@@ -8,7 +8,7 @@ namespace Basebound.Player;
 /// Core player component managing identity, progression, and state.
 /// Handles currency, health, skill tracking, and game system integration.
 /// </summary>
-public sealed class PlayerBase : Component
+public sealed class PlayerState : Component
 {
 	private BBClient OwnerClient => GameObject?.Components?.Get<BBClient>();
 

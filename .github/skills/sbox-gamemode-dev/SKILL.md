@@ -374,13 +374,13 @@ Don't let Razor components reach deep into game objects. Instead, use a **bridge
 public sealed class HudDataBridge : Component
 {
     // Viewer's pawn (who we're watching)
-    private Pawn ViewerPawn => Client.Viewer?.Pawn as Pawn;
+    private Pawn ViewerPawn => PlayerClient.Viewer?.Pawn as Pawn;
     private HealthComponent Health => ViewerPawn?.HealthComponent;
     
     // HUD-friendly projections (no nulls, formatted strings)
     public float HealthPercent => Health?.Health ?? 0f;
     public bool HasPawn => ViewerPawn.IsValid();
-    public string ViewerName => Client.Viewer?.DisplayName ?? "Unknown";
+    public string ViewerName => PlayerClient.Viewer?.DisplayName ?? "Unknown";
     
     // Ammo (when you add weapons)
     public int CurrentAmmo => 0; // TODO: read from equipped weapon
@@ -430,7 +430,7 @@ public sealed class HudDataBridge : Component
 
 | Without Bridge | With Bridge |
 |----------------|-------------|
-| UI reaches into `Client.Viewer.Pawn.HealthComponent.Health` | UI reads `bridge.HealthPercent` |
+| UI reaches into `PlayerClient.Viewer.Pawn.HealthComponent.Health` | UI reads `bridge.HealthPercent` |
 | Null checks everywhere in Razor | Null handling in one place |
 | Hard to debug (which null broke?) | Log bridge values, verify before UI |
 | Tight coupling | Bridge is the contract |
@@ -450,7 +450,7 @@ public sealed class HudDataBridge : Component
 </root>
 
 @code {
-    private Pawn LocalPawn => Client.Local?.CurrentPawn;
+    private Pawn LocalPawn => PlayerClient.Local?.CurrentPawn;
     
     public float HealthPercent => LocalPawn?.Health ?? 0;
     public int CurrentAmmo => LocalPawn?.ActiveWeapon?.CurrentAmmo ?? 0;
@@ -533,7 +533,7 @@ protected override void OnUpdate()
     if (DebugMode)
     {
         DebugOverlay.Text($"RoundState: {GameMode.CurrentState}");
-        DebugOverlay.Text($"Score: {Client.Local?.Score}");
+        DebugOverlay.Text($"Score: {PlayerClient.Local?.Score}");
     }
 }
 
@@ -541,7 +541,7 @@ protected override void OnUpdate()
 [ConCmd("debug_kill")]
 static void DebugKill()
 {
-    Client.Local?.CurrentPawn?.TakeDamage(9999);
+    PlayerClient.Local?.CurrentPawn?.TakeDamage(9999);
 }
 ```
 
@@ -557,7 +557,7 @@ Code/
 │       ├── TeamAssignerRule.cs
 │       └── RoundLimitRule.cs
 ├── PawnSystem/
-│   ├── Client.cs                # Persistent player state
+│   ├── PlayerClient.cs                # Persistent player state
 │   ├── Pawn.cs                  # Disposable body
 │   └── Player/
 │       ├── PlayerController.cs

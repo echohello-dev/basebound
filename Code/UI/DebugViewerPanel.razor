@@ -1,6 +1,6 @@
 @using Sandbox;
 @using Sandbox.UI;
-@using Basebound.PawnSystem;
+@using Basebound.Player;
 @inherits Panel
 @attribute [StyleSheet]
 @namespace Basebound.UI
@@ -10,7 +10,8 @@
 
 	<div class="row">
 		<span class="key">Local</span>
-		<span class="value @(LocalClient.IsValid() ? "ok" : "bad")">@(LocalClient.IsValid() ? "valid" : "null")</span>
+		<span class="value @(LocalClient.IsValid() ? "ok" : "bad")">@(LocalClient.IsValid() ? "valid" :
+						"null")</span>
 	</div>
 
 	<div class="row">
@@ -20,7 +21,9 @@
 
 	<div class="row">
 		<span class="key">Viewer.PlayerState</span>
-		<span class="value @(ViewerPlayer.IsValid() ? "ok" : "bad")">@(ViewerPlayer.IsValid() ? "valid" : "null")</span>
+		<span class="value @(ViewerClient.PlayerState.IsValid() ? "ok" : "bad")">@(ViewerClient.PlayerState.IsValid() ?
+						"valid" :
+						"null")</span>
 	</div>
 
 	<div class="row">
@@ -57,10 +60,10 @@
 {
 	public HudDataBridge Bridge { get; set; }
 
-	Client LocalClient => Client.Local;
-	Client ViewerClient => Client.Viewer;
+	PlayerClient LocalClient => PlayerClient.Local;
+	PlayerClient ViewerClient => PlayerClient.Viewer;
 	Component ViewerPawn => ViewerClient?.Pawn;
-	Basebound.Player.PlayerBase ViewerPlayer => ViewerClient?.PlayerState;
+	Basebound.Player.PlayerState ViewerPlayer => ViewerClient?.PlayerState;
 
 	protected override int BuildHash()
 	{
