@@ -100,43 +100,45 @@ public sealed class HudDataBridge : Component
 	/// </summary>
 	public string PassiveIncomeFormatted => ViewerPlayerState?.PassiveIncomeFormatted ?? "+0/s";
 
-	// ===== AMMO (temp PlayerState source for Slice 2) =====
+	// ===== AMMO (equipped weapon source for Slice 2) =====
+
+	private Basebound.Player.WeaponComponent ViewerWeapon => ViewerPlayerClient?.Pawn?.GameObject?.Components?.Get<Basebound.Player.WeaponComponent>();
 
 	/// <summary>
 	/// Weapon display name.
 	/// </summary>
-	public string WeaponName => "Weapon"; // TODO: Slice 2 - read from equipped weapon
+	public string WeaponName => ViewerWeapon?.WeaponName ?? "Weapon";
 
 	/// <summary>
 	/// Ammo type label (e.g., 5.56, 9mm).
 	/// </summary>
-	public string AmmoType => "Ammo"; // TODO: Slice 2 - read from equipped weapon
+	public string AmmoType => ViewerWeapon?.AmmoType ?? "Ammo";
 
 	/// <summary>
 	/// Current firing mode label (e.g., Auto, Burst, Semi).
 	/// </summary>
-	public string FiringMode => "Auto"; // TODO: Slice 2 - read from equipped weapon
-
+	public string FiringMode => ViewerWeapon?.FiringMode ?? "Auto";
 
 	/// <summary>
 	/// Current ammo in magazine.
 	/// </summary>
-	public int CurrentAmmo => ViewerPlayerState?.CurrentAmmo ?? 0;
+	public int CurrentAmmo => ViewerWeapon?.CurrentAmmo ?? 0;
 
 	/// <summary>
 	/// Maximum ammo capacity.
 	/// </summary>
-	public int MaxAmmo => ViewerPlayerState?.MaxAmmo ?? 0;
+	public int MaxAmmo => ViewerWeapon?.MaxAmmo ?? 0;
 
 	/// <summary>
 	/// Reserve ammo count.
 	/// </summary>
-	public int ReserveAmmo => ViewerPlayerState?.ReserveAmmo ?? 0;
+	public int ReserveAmmo => ViewerWeapon?.ReserveAmmo ?? 0;
 
 	/// <summary>
 	/// Whether the current weapon has ammo.
 	/// </summary>
 	public bool HasAmmo => CurrentAmmo > 0;
+
 
 
 	// ===== ROUND TIMER (placeholder for timer slice) =====

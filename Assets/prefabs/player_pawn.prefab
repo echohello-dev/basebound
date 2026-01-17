@@ -88,7 +88,26 @@
         "WalkSpeed": 110
       },
       {
+        "__type": "Basebound.Player.WeaponComponent",
+        "__guid": "f3ef3b5b-2f6f-4a21-8b47-0c1a43e1ef89",
+        "__enabled": true,
+        "Flags": 0,
+        "WeaponName": "Carbine",
+        "AmmoType": "5.56",
+        "FiringMode": "Auto",
+        "MaxAmmo": 30,
+        "CurrentAmmo": 30,
+        "ReserveAmmo": 90,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+      {
         "__type": "Sandbox.Movement.MoveModeWalk",
+
         "__guid": "fbd5d061-63e8-43f6-b05b-9de03dc3ec90",
         "__enabled": true,
         "Flags": 0,

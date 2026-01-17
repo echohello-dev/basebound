@@ -22,6 +22,21 @@ public static class PlayerDebugCommands
 		return player.IsValid() ? player : null;
 	}
 
+	private static WeaponComponent GetLocalWeapon()
+	{
+		var client = PlayerClient.Local;
+		if (!client.IsValid())
+			return null;
+
+		var pawn = client.Pawn;
+		if (!pawn.IsValid())
+			return null;
+
+		var weapon = pawn.GameObject.Components.Get<WeaponComponent>();
+		return weapon.IsValid() ? weapon : null;
+	}
+
+
 	[ConCmd("bb_damage")]
 	public static void Damage(int amount = 10)
 	{
@@ -134,13 +149,20 @@ public static class PlayerDebugCommands
 			return;
 		}
 
-		if (!player.ConsumeAmmo(amount))
+		var weapon = GetLocalWeapon();
+		if (weapon is null)
 		{
-			Log.Warning($"bb_consume_ammo: not enough ammo (Current {player.CurrentAmmo}).");
+			Log.Warning("bb_consume_ammo: no WeaponComponent found on pawn.");
 			return;
 		}
 
-		Log.Info($"bb_consume_ammo: {amount} -> {player.CurrentAmmo}/{player.MaxAmmo} (Reserve {player.ReserveAmmo})");
+		if (!weapon.ConsumeAmmo(amount))
+		{
+			Log.Warning($"bb_consume_ammo: not enough ammo (Current {weapon.CurrentAmmo}).");
+			return;
+		}
+
+		Log.Info($"bb_consume_ammo: {amount} -> {weapon.CurrentAmmo}/{weapon.MaxAmmo} (Reserve {weapon.ReserveAmmo})");
 	}
 
 	[ConCmd("bb_reload")]
@@ -159,8 +181,15 @@ public static class PlayerDebugCommands
 			return;
 		}
 
-		player.ReloadAmmo();
-		Log.Info($"bb_reload: -> {player.CurrentAmmo}/{player.MaxAmmo} (Reserve {player.ReserveAmmo})");
+		var weapon = GetLocalWeapon();
+		if (weapon is null)
+		{
+			Log.Warning("bb_reload: no WeaponComponent found on pawn.");
+			return;
+		}
+
+		weapon.ReloadAmmo();
+		Log.Info($"bb_reload: -> {weapon.CurrentAmmo}/{weapon.MaxAmmo} (Reserve {weapon.ReserveAmmo})");
 	}
 
 	[ConCmd("bb_set_ammo")]
@@ -183,9 +212,16 @@ public static class PlayerDebugCommands
 		current = current.Clamp(0, max);
 		reserve = reserve.Clamp(0, 999);
 
-		player.MaxAmmo = max;
-		player.CurrentAmmo = current;
-		player.ReserveAmmo = reserve;
-		Log.Info($"bb_set_ammo: -> {player.CurrentAmmo}/{player.MaxAmmo} (Reserve {player.ReserveAmmo})");
+		var weapon = GetLocalWeapon();
+		if (weapon is null)
+		{
+			Log.Warning("bb_set_ammo: no WeaponComponent found on pawn.");
+			return;
+		}
+
+		weapon.MaxAmmo = max;
+		weapon.CurrentAmmo = current;
+		weapon.ReserveAmmo = reserve;
+		Log.Info($"bb_set_ammo: -> {weapon.CurrentAmmo}/{weapon.MaxAmmo} (Reserve {weapon.ReserveAmmo})");
 	}
 }

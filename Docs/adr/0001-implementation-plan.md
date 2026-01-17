@@ -77,7 +77,7 @@
 **Checklist**
 
 - [x] Surface current, max, and reserve ammo through `HudDataBridge`.
-- [ ] Expose ammo data from equipped weapon components (temp source: `PlayerState`).
+- [x] Expose ammo data from equipped weapon components (temp source: `WeaponComponent` on pawn).
 - [x] Create `AmmoDisplay.razor` panel.
 - [x] Document shoot/reload keybinds for QA (default: `Attack1` = Mouse1, `Reload` = R; see `ProjectSettings/Input.config`).
 - [ ] QA: Fire and reload to validate ammo updates.
@@ -92,28 +92,10 @@
 
 - HUD reflects ammunition changes immediately after shots and reloads.
 
-### Workstream 3 – Round Timer (Slice 3)
-
-**Goal**: Provide synchronized round timing to the HUD via globals.  
-**Dependencies**: Workstream 1  
-**Status**: Not started
-
-**Checklist**
-
-- [ ] Implement `RoundTimerGlobal` synchronized component.
-- [ ] Add `RoundTimerRule` to tick and broadcast timer values.
-- [ ] Project timer seconds/text in `HudDataBridge`.
-- [ ] Create `RoundTimer.razor` display.
-- [ ] QA: Verify timer start/stop during round transitions.
-
-**Exit criteria**
-
-- HUD countdown matches server-authoritative timer under host/client play.
-
-### Workstream 4 – Combat Events (Slice 4)
+### Workstream 3 – Combat Events (Slice 3)
 
 **Goal**: Deliver event-driven HUD feedback for kills and damage.  
-**Dependencies**: Workstreams 1–3  
+**Dependencies**: Workstreams 1–2  
 **Status**: Not started
 
 **Checklist**
@@ -127,10 +109,10 @@
 
 - Combat events appear in HUD without polling gameplay state.
 
-### Workstream 5 – Control Plane Hardening
+### Workstream 4 – Control Plane Hardening
 
 **Goal**: Confirm control plane data remains stable during lifecycle transitions.  
-**Dependencies**: Workstreams 1–4  
+**Dependencies**: Workstreams 1–3  
 **Status**: Not started
 
 **Checklist**
@@ -147,16 +129,15 @@
 ## Milestones
 
 - **M1 – HUD Foundation Verified**: Workstream 1 complete.
-- **M2 – Combat Telemetry Online**: Workstreams 1–3 complete.
-- **M3 – Event-Driven HUD Feedback**: Workstreams 1–4 complete.
-- **M4 – Control Plane Stable**: Workstreams 1–5 complete.
+- **M2 – Combat Telemetry Online**: Workstreams 1–2 complete.
+- **M3 – Event-Driven HUD Feedback**: Workstreams 1–3 complete.
+- **M4 – Control Plane Stable**: Workstreams 1–4 complete.
 
 ## Dependency Overview
 
 - Workstream 2 depends on health slice patterns for binding to the bridge.
-- Workstream 3 introduces the first global + rule pairing.
-- Workstream 4 leverages events emitted from `PlayerState`.
-- Workstream 5 consolidates lifecycle validation after telemetry slices are proven.
+- Workstream 3 leverages events emitted from `PlayerState`.
+- Workstream 4 consolidates lifecycle validation after telemetry slices are proven.
 
 ## Risks & Mitigations
 
@@ -173,8 +154,8 @@
 
 ## Minimum Viable Gamemode Backlog
 
-- **P0** – Complete Workstreams 1–4 for a functional HUD.
-- **P1** – Add round state machine, team assignment, and scoreboard integration.
+- **P0** – Complete Workstreams 1–3 for a functional HUD.
+- **P1** – Add game state progression, team assignment, and scoreboard integration.
 - **P2** – Layer weapon components and feedback (crosshair, hit markers).
 - **P3** – Extend into advanced systems (minimap, chat, bots) once the HUD foundation proves stable.
 
