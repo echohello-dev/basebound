@@ -103,6 +103,22 @@ public sealed class HudDataBridge : Component
 	// ===== AMMO (temp PlayerState source for Slice 2) =====
 
 	/// <summary>
+	/// Weapon display name.
+	/// </summary>
+	public string WeaponName => "Weapon"; // TODO: Slice 2 - read from equipped weapon
+
+	/// <summary>
+	/// Ammo type label (e.g., 5.56, 9mm).
+	/// </summary>
+	public string AmmoType => "Ammo"; // TODO: Slice 2 - read from equipped weapon
+
+	/// <summary>
+	/// Current firing mode label (e.g., Auto, Burst, Semi).
+	/// </summary>
+	public string FiringMode => "Auto"; // TODO: Slice 2 - read from equipped weapon
+
+
+	/// <summary>
 	/// Current ammo in magazine.
 	/// </summary>
 	public int CurrentAmmo => ViewerPlayerState?.CurrentAmmo ?? 0;

@@ -8,14 +8,21 @@
 
 <root class="ammo-display">
 	<div class="ammo-container">
-		<div class="ammo-label">AMMO</div>
+		<div class="ammo-header">
+			<div class="weapon-name">@Bridge.WeaponName</div>
+			<div class="ammo-label">@Bridge.AmmoType</div>
+		</div>
 		<div class="ammo-values">
 			<span class="current">@Bridge.CurrentAmmo</span>
 			<span class="separator">/</span>
 			<span class="max">@Bridge.MaxAmmo</span>
 		</div>
-		<div class="reserve">@Bridge.ReserveAmmo</div>
+		<div class="ammo-meta">
+			<span class="reserve">@Bridge.ReserveAmmo</span>
+			<span class="mode">@Bridge.FiringMode</span>
+		</div>
 		<div class="ammo-bullets">
+
 			@for (var i = 0; i < BulletCount; i++)
 			{
 				var isFilled = i < Bridge.CurrentAmmo;
@@ -91,13 +98,17 @@
 	{
 		if (!Bridge.IsValid()) return 0;
 
-		return System.HashCode.Combine(
-		Bridge.HasViewer,
-		Bridge.CurrentAmmo,
-		Bridge.MaxAmmo,
-		Bridge.ReserveAmmo,
-		_ejectIndex,
-		IsEjecting
-		);
+		var hash = new System.HashCode();
+		hash.Add(Bridge.HasViewer);
+		hash.Add(Bridge.CurrentAmmo);
+		hash.Add(Bridge.MaxAmmo);
+		hash.Add(Bridge.ReserveAmmo);
+		hash.Add(Bridge.WeaponName);
+		hash.Add(Bridge.AmmoType);
+		hash.Add(Bridge.FiringMode);
+		hash.Add(_ejectIndex);
+		hash.Add(IsEjecting);
+		return hash.ToHashCode();
 	}
+
 }
