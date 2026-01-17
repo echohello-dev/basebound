@@ -21,9 +21,7 @@
 
 	<div class="row">
 		<span class="key">Viewer.PlayerState</span>
-		<span class="value @(ViewerClient.PlayerState.IsValid() ? "ok" : "bad")">@(ViewerClient.PlayerState.IsValid() ?
-						"valid" :
-						"null")</span>
+		<span class="value @(ViewerPlayer.IsValid() ? "ok" : "bad")">@(ViewerPlayer.IsValid() ? "valid" : "null")</span>
 	</div>
 
 	<div class="row">
@@ -47,6 +45,21 @@
 		<div class="row">
 			<span class="key">Bridge.IsSpectating</span>
 			<span class="value">@Bridge.IsSpectating</span>
+		</div>
+
+		<div class="row">
+			<span class="key">Viewer.IsLocal</span>
+			<span class="value">@(ViewerClient?.IsLocalPlayer ?? false)</span>
+		</div>
+
+		<div class="row">
+			<span class="key">Viewer.IsProxy</span>
+			<span class="value">@(ViewerClient?.IsProxy ?? false)</span>
+		</div>
+
+		<div class="row">
+			<span class="key">Viewer.IsAlive</span>
+			<span class="value">@(ViewerPlayer?.IsAlive ?? false)</span>
 		</div>
 
 		<div class="row">
