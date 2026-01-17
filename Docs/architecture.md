@@ -97,8 +97,12 @@ graph TD
 Code/               → Runtime components (game logic)
   ├── Assembly.cs  → Global usings
   ├── MyComponent.cs → Component template
-  ├── PawnSystem/
-  │   └── PlayerClient.cs → Networked player ownership (Local/Viewer statics)
+  ├── Player/
+  │   ├── PlayerClient.cs → Networked player identity (Local/Viewer statics)
+  │   └── PlayerState.cs  → Persistent player stats (health, currency, etc.)
+  ├── UI/
+  │   ├── HudDataBridge.cs → HUD projection layer (reads viewer + state)
+  │   └── MainHUD.razor    → Root in-game HUD panel
   └── Properties/  → Launch settings
 
 Editor/             → Editor-only tools (separate assembly)
@@ -109,8 +113,10 @@ Editor/             → Editor-only tools (separate assembly)
 Assets/             → Scenes, materials, models
   ├── scenes/
   │   └── minimal.scene → Default startup scene
-  ├── construct1.scene
-  └── flatgrass1.scene
+  └── prefabs/
+      ├── heads_up_display.prefab → ScreenPanel + MainHUD + HudDataBridge
+      ├── player_client.prefab    → PlayerClient + PlayerState (per-player data)
+      └── player_pawn.prefab      → Physical pawn (movement/colliders/camera)
 
 ProjectSettings/    → Engine configuration
   ├── Collision.config
@@ -119,11 +125,48 @@ ProjectSettings/    → Engine configuration
 
 ## Pawn System Overview
 
-- **Client Component** (`Code/PawnSystem/PlayerClient.cs`)
-  - `[RequireComponent]`s `PlayerState` so every networked player object carries persistent stats plus connection metadata.
-  - Exposes `PlayerClient.Local` and `PlayerClient.Viewer` statics mirroring the hc1 pattern, letting UI elements and gameplay systems query the active viewpoint without scanning the scene.
-  - Provides `PlayerClient.OnPossess( client, pawn )` for controllers to call whenever possession changes, keeping `Viewer` synchronized (spectating, respawn flows, etc.).
-  - Stores connection identifiers (`SteamId`, `DisplayName`) via `[Sync]` so scoreboards and HUD elements share the same data set.
+Basebound follows a **Client / Pawn split**:
+
+- **Client** answers: “who is this player?” (identity + persistent stats)
+- **Pawn** answers: “what body is currently being controlled?” (physical object in the world)
+
+This keeps HUD and game logic stable across death/respawn and future possession swaps (vehicles, drones, etc.).
+
+### PlayerClient (the per-player identity)
+
+- **Client Component** (`Code/Player/PlayerClient.cs`)
+  - `[RequireComponent]`s `PlayerState`, so every player has persistent stats plus connection metadata.
+  - Exposes `PlayerClient.Local` and `PlayerClient.Viewer` statics (hc1-style) so UI and gameplay can query “who are we?” and “whose view is this?” without scanning the scene.
+  - Provides `PlayerClient.OnPossess( client, pawn )` for the pawn/controller layer to call whenever possession changes.
+  - Stores identity fields (`SteamId`, `DisplayName`, `IsBot`) via `[Sync(SyncFlags.FromHost)]`.
+
+> Note: Spectating/viewer swapping is intentionally restricted right now (gameplay/security: avoid revealing bases). The viewer is pinned to local.
+
+### PlayerState (persistent stats)
+
+- **PlayerState Component** (`Code/Player/PlayerState.cs`)
+  - Holds health and other slice-1 stats.
+  - Host-authoritative mutation (UI reads only).
+
+### Prefabs (how this shows up in scenes)
+
+- `Assets/prefabs/player_client.prefab`
+  - Contains `PlayerClient` + `PlayerState`.
+  - This is what HUD reads through the bridge.
+- `Assets/prefabs/player_pawn.prefab`
+  - Contains the physical pawn (movement, collisions, camera).
+  - Spawned by `Sandbox.NetworkHelper` as the `PlayerPrefab`.
+
+## HUD Projection (HudDataBridge)
+
+Basebound uses a small “bridge” layer so Razor UI doesn’t reach into world objects directly.
+
+- `Code/UI/HudDataBridge.cs` samples `PlayerClient.Viewer` (and its `PlayerState`) and exposes HUD-safe values like health percent.
+- The bridge is attached to `Assets/prefabs/heads_up_display.prefab`.
+
+For the long-term architecture (control plane + rules + globals), see:
+
+- `Docs/adr/0001-control-plane-and-hud-bridge.md`
 
 ## Editor Extensions
 
