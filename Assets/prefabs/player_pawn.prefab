@@ -92,34 +92,23 @@
         "__guid": "f3ef3b5b-2f6f-4a21-8b47-0c1a43e1ef89",
         "__enabled": true,
         "Flags": 0,
-        "WeaponName": "Carbine",
         "AmmoType": "5.56",
+        "AutoFire": true,
+        "CurrentAmmo": 30,
+        "FireRate": 8,
         "FiringMode": "Auto",
         "MaxAmmo": 30,
-        "CurrentAmmo": 30,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null,
         "ReserveAmmo": 90,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
-      },
-      {
-        "__type": "Basebound.Player.PlayerPawnBinder",
-        "__guid": "3f0b4d9a-2f61-4e6a-90f6-6f1f2a165e2b",
-        "__enabled": true,
-        "Flags": 0,
-        "OnComponentDestroy": null,
-        "OnComponentDisabled": null,
-        "OnComponentEnabled": null,
-        "OnComponentFixedUpdate": null,
-        "OnComponentStart": null,
-        "OnComponentUpdate": null
+        "WeaponName": "Carbine"
       },
       {
         "__type": "Sandbox.Movement.MoveModeWalk",
-
         "__guid": "fbd5d061-63e8-43f6-b05b-9de03dc3ec90",
         "__enabled": true,
         "Flags": 0,
@@ -221,6 +210,18 @@
         "OverrideMassCenter": true,
         "RigidbodyFlags": "DisableCollisionSounds",
         "StartAsleep": false
+      },
+      {
+        "__type": "Basebound.Player.PlayerPawnBinder",
+        "__guid": "6585a682-5149-4c46-89f4-8703e241219e",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
       }
     ],
     "Children": [
