@@ -80,7 +80,9 @@
 - [x] Expose ammo data from equipped weapon components (temp source: `WeaponComponent` on pawn).
 - [x] Create `AmmoDisplay.razor` panel.
 - [x] Document shoot/reload keybinds for QA (default: `Attack1` = Mouse1, `Reload` = R; see `ProjectSettings/Input.config`).
+- [x] Implement `WeaponComponent` input handling for firing/reload QA.
 - [ ] QA: Fire and reload to validate ammo updates.
+
 
 **QA inputs (defaults)**
 

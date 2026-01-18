@@ -8,8 +8,11 @@ namespace Basebound.Player;
 /// </summary>
 public sealed class WeaponComponent : Component
 {
+	private TimeSince _timeSinceLastShot = 0f;
+
 	[Property, Header("Weapon Info"), Title("Weapon Name")]
 	public string WeaponName { get; set; } = "Carbine";
+
 
 	[Property, Title("Ammo Type")]
 	public string AmmoType { get; set; } = "5.56";
@@ -25,6 +28,24 @@ public sealed class WeaponComponent : Component
 
 	[Property, ReadOnly, Range(0, 999), Title("Reserve Ammo")]
 	[Sync] public int ReserveAmmo { get; set; } = 90;
+
+	[Property, Header("Input"), Title("Auto Fire")]
+	public bool AutoFire { get; set; } = true;
+
+	[Property, Range(0.05f, 1f), Title("Shots Per Second")]
+	public float FireRate { get; set; } = 8f;
+
+
+	protected override void OnUpdate()
+	{
+		base.OnUpdate();
+
+		if (IsProxy)
+			return;
+
+		HandleFireInput();
+		HandleReloadInput();
+	}
 
 	/// <summary>
 	/// Attempts to consume ammo from the magazine.
@@ -55,4 +76,32 @@ public sealed class WeaponComponent : Component
 		CurrentAmmo += toLoad;
 		ReserveAmmo -= toLoad;
 	}
+
+	private void HandleFireInput()
+	{
+		var canFire = AutoFire ? Input.Down("Attack1") : Input.Pressed("Attack1");
+		if (!canFire)
+			return;
+
+		if (FireRate <= 0f)
+			return;
+
+		var timeBetweenShots = 1f / FireRate;
+		if (_timeSinceLastShot < timeBetweenShots)
+			return;
+
+		if (!ConsumeAmmo())
+			return;
+
+		_timeSinceLastShot = 0f;
+	}
+
+	private void HandleReloadInput()
+	{
+		if (!Input.Pressed("Reload"))
+			return;
+
+		ReloadAmmo();
+	}
 }
+
