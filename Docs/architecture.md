@@ -51,7 +51,91 @@ graph LR
 4. **OnFixedUpdate()** - Called at fixed physics timestep (50/sec, 20ms)
 5. **OnDestroy()** - Called when component or GameObject is destroyed
 
+## S&box API Usage Examples (from sbox-hc1)
+
+### Component Configuration & Sync
+
+```csharp
+[Property, Category("Config")] public float Duration { get; set; } = 45f;
+[Sync( SyncFlags.FromHost )] public TimeSince TimeSincePlanted { get; private set; }
+[RequireComponent] public Spottable Spottable { get; private set; }
+```
+
+### Traces, Tags, and Scene Queries
+
+```csharp
+var trace = Scene.Trace.Ray( start, end )
+    .IgnoreGameObjectHierarchy( GameObject.Root )
+    .WithoutTags( "trigger", "ragdoll" )
+    .Run();
+
+GameObject.Tags.Add( "zone" );
+var zones = Scene.GetAllComponents<Zone>();
+```
+
+### Audio, Resources, and Prefabs
+
+```csharp
+var resource = ResourceLibrary.Get<SoundEvent>( resourceId );
+Sound.Play( resource, WorldPosition );
+
+var explosion = ExplosionPrefab.Clone( WorldPosition, Rotation.Identity );
+explosion.NetworkSpawn();
+```
+
+## UI, Prefabs, and Scenes (S&box patterns)
+
+### Razor UI Composition
+
+```razor
+@inherits PanelComponent
+
+@if (!IsHudEnabled)
+    return;
+
+<root>
+    <ScreenProtectionOverlay />
+    <KillFeed @ref="KillFeed" />
+</root>
+
+@code
+{
+    protected override int BuildHash()
+    {
+        return HashCode.Combine(IsHudEnabled, Client.Viewer.IsValid());
+    }
+}
+```
+
+### Scene JSON Composition
+
+```json
+{
+  "Name": "Main Menu",
+  "Components": [
+    { "__type": "Sandbox.ScreenPanel" },
+    { "__type": "Facepunch.UI.MainMenuPanel" },
+    { "__type": "Sandbox.Audio.SoundEmitter" }
+  ]
+}
+```
+
+### Prefab JSON Composition
+
+```json
+{
+  "RootObject": {
+    "Name": "hud",
+    "Components": [
+      { "__type": "Facepunch.UI.MainHUD" },
+      { "__type": "Sandbox.ScreenPanel" }
+    ]
+  }
+}
+```
+
 ## Gameplay Architecture
+
 
 ```mermaid
 graph TB

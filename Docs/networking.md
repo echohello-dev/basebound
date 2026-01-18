@@ -11,6 +11,32 @@ Basebound is a multiplayer gamemode with full networking support. The game runs 
 
 ## Basic Networking
 
+### Host Authority and RPC Filters
+
+```csharp
+if ( !Networking.IsHost ) return;
+
+[Rpc.Broadcast( NetFlags.HostOnly )]
+public void StartDefusing( PlayerPawn player ) { }
+
+using ( Rpc.FilterInclude( Connection.Host ) )
+{
+    InflictDamage( target, damage, pos, dir, hitbox, flags );
+}
+```
+
+### Owner-Only RPCs
+
+```csharp
+[Rpc.Owner]
+public void Deploy()
+{
+    if ( IsDeployed ) return;
+    IsDeployed = true;
+}
+```
+
+
 ### Spawning Networked Objects
 
 ```csharp

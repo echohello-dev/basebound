@@ -21,7 +21,75 @@ graph TB
     style F fill:#1abc9c
 ```
 
+## Core Mechanics Patterns (Generic)
+
+### Interaction and Use
+
+```csharp
+public UseResult CanUse( PlayerPawn player )
+{
+    return State is DoorState.Open or DoorState.Closed;
+}
+
+public void OnUse( PlayerPawn player )
+{
+    LastUse = 0f;
+}
+```
+
+### Damage and Health
+
+```csharp
+[Property] public float Damage { get; set; } = 10f;
+[Property] public float Interval { get; set; } = 0.5f;
+
+void ITriggerListener.OnTriggerEnter( Collider other )
+{
+    if ( !Networking.IsHost ) return;
+    var receiver = other.GameObject?.Root.GetComponentInChildren<IAreaDamageReceiver>();
+    if ( !receiver.IsValid() ) return;
+    receiver.ApplyAreaDamage( this );
+}
+```
+
+### Audio and VFX
+
+```csharp
+var resource = ResourceLibrary.Get<SoundEvent>( resourceId );
+if ( resource != null )
+{
+    Sound.Play( resource, WorldPosition );
+}
+
+if ( effectPrefab.IsValid() )
+{
+    effectPrefab.Clone( WorldPosition );
+}
+```
+
+### Inventory and Equipment
+
+```csharp
+[Property] public EquipmentResource Resource { get; set; }
+
+public UseResult CanUse( PlayerPawn player )
+{
+    if ( player.Inventory.CanTake( Resource ) == PlayerInventory.PickupResult.None )
+        return "Can't pick this up";
+
+    return true;
+}
+```
+
+### Triggers and Zones
+
+```csharp
+GameObject.Tags.Add( "zone" );
+var zones = Scene.GetAllComponents<Zone>();
+```
+
 ## Game Systems
+
 
 ### Base Building System
 

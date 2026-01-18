@@ -87,7 +87,59 @@ public int CalculateReward(Contract contract)
 }
 ```
 
+## Engine API Patterns (S&box)
+
+```csharp
+// Trace helpers
+var trace = Scene.Trace.Ray( start, end )
+    .UseHitboxes()
+    .WithoutTags( "trigger", "playerclip" )
+    .Run();
+
+// Spawn + destroy
+var dropped = Prefab.Clone( position, rotation );
+dropped.NetworkSpawn();
+GameObject.Destroy();
+
+// Time utilities
+if ( TimeSinceShoot < FireRate ) return;
+var smooth = current.LerpTo( target, Time.Delta * 10f );
+```
+
+## Mechanics Checklists
+
+### Interaction + Use
+
+- Implement `CanUse` to gate interaction and return a `UseResult` message when blocked.
+- Keep `OnUse` lightweight and delegate longer work to helpers.
+- Prefer `GrabAction` to reflect contextual hand animations.
+
+### Damage + Health
+
+- Guard damage application with `if ( !Networking.IsHost ) return;`.
+- Keep damage interval logic in `OnFixedUpdate` or trigger listeners.
+- Store falloff curves and damage flags as `[Property]` for tuning.
+
+### Audio + VFX
+
+- Use `ResourceLibrary.Get<T>` to resolve assets by id when needed.
+- Prefer `Sound.Play` with positional audio at `WorldPosition`.
+- Gate effect spawns with `IsValid()` checks.
+
+### Inventory + Equipment
+
+- Validate `CanTake` before pickup or equip.
+- Use tags for state (`reloading`, `no_shooting`, `lowered`).
+- Keep owner-only actions under `[Rpc.Owner]` when needed.
+
+### Triggers + Zones
+
+- Use `Tags` and `Trace` filters to avoid trigger hits.
+- Favor `Scene.GetAllComponents<T>()` for broad queries.
+- Track trigger membership in dictionaries for periodic cleanup.
+
 ## Networking Guidelines
+
 
 ### Always Consider Multiplayer
 
