@@ -149,6 +149,7 @@ public static void OpenMyMenu() { }
 
 - **Docs**: https://docs.facepunch.com/s/sbox-dev
 - **API**: https://sbox.game/api
+- **Base Addon**: Prefer referencing native base addon sources (Steam install `...\sbox\addons\base`) when matching engine/base behavior.
 - **Global usings**: `Sandbox`, `System.Collections.Generic`, `System.Linq` ([Code/Assembly.cs](Code/Assembly.cs))
 
 ## MCP Servers
@@ -190,6 +191,7 @@ Skills are self-contained and should not require project documentation updates.
 | [sbox-triggers-collisions](.github/skills/sbox-triggers-collisions/) | Trigger & collision detection | Interactive zones, physics interactions, detecting enter/exit |
 | [sbox-gamemode-dev](.github/skills/sbox-gamemode-dev/) | Beginner-friendly gamemode architecture | Learning S&box, Client/Pawn split, event-driven rules, weapons, bots |
 | [sbox-sample-patterns](.github/skills/sbox-sample-patterns/) | Patterns from Facepunch sample gamemodes (prefabs, scenes, UI, spawn flow) | Building Basebound with reference to sample game structures |
+| [sbox-base-addon-references](.github/skills/sbox-base-addon-references/) | Locate native S&box base addon sources for code, prefabs, scenes, and UI | Referencing canonical base addon patterns or APIs |
 
 
 ### Adding New Skills
