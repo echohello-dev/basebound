@@ -1,58 +1,43 @@
 ---
 name: sbox-sample-patterns
-description: Patterns from Facepunch sample gamemodes (hc1, walker, jumpgame) covering prefab-driven state graphs, additive UI scenes, player prefabs, scene wiring, and standard S&box APIs. Use when building Basebound with reference to real shipped sample structures.
+description: Patterns from common S&box sample gamemodes covering prefab-driven state graphs, additive UI scenes, player prefabs, scene wiring, and standard S&box APIs. Use when building Basebound with reference to portable sample structures.
 metadata:
   author: basebound
   version: "1.0"
-  sources:
-    - Facepunch sbox-hc1
-    - Facepunch sbox-walker
-    - Facepunch sbox-jumpgame
 compatibility: S&box (Facepunch), .NET 10, C# 14
 ---
 
 # S&box Sample Gamemode Patterns
 
-Use this skill when you want to align Basebound’s structure with real Facepunch sample gamemodes (prefabs, scenes, UI, and spawn flow).
+Use this skill to align Basebound’s structure with portable, sample-proven patterns for prefabs, scenes, UI, and spawn flow.
 
 ## When to Use
 
 - Planning Basebound’s gamemode architecture and scene layout
 - Organizing prefabs, UI, and scene wiring for S&box
 - Reusing sample-proven spawn/lobby patterns
-- Referencing how Facepunch composes rules with state graphs
+- Referencing how to compose rules with prefab state graphs
 
 ## Key Patterns From Samples
 
-### 1. Prefab-Driven Gamemode State Graphs (hc1)
+### 1. Prefab-Driven Gamemode State Graphs
 
 - Root `GameMode` object owns a `StateMachineComponent` under a `States` child.
 - Each state (`StateComponent`) hosts rule components like respawn, countdown, UI, scoring.
 - Mode selection is driven by prefab hierarchy rather than hard-coded logic.
 
-References:
-- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-hc1\Assets\prefabs\game_modes\deathmatch.prefab`
-- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-hc1\Code\GameLoop\GameMode.cs`
-
-### 2. Host Startup + Lobby + Spawn (walker, jumpgame)
+### 2. Host Startup + Lobby + Spawn
 
 - Host creates lobby in `ISceneStartup.OnHostInitialize`.
 - `Component.INetworkListener.OnActive` spawns a player prefab for each connection.
 - Player spawn uses `GameObject.Clone` + `NetworkSpawn(owner)`.
 
-References:
-- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-walker\code\GameManager.cs`
-- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-jumpgame\Code\GamePlay\GameManager.cs`
-
-### 3. Additive Engine Scene for UI (walker)
+### 3. Additive Engine Scene for UI
 
 - Host loads a lightweight UI scene additively.
 - Engine scene wires `ScreenPanel` and Razor UI components (HUD, chat, scoreboard).
 
-References:
-- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-walker\Assets\Scenes\engine.scene`
-
-### 4. Player Prefab Composition (walker, jumpgame)
+### 4. Player Prefab Composition
 
 Player prefabs bundle the full pawn stack:
 
@@ -60,27 +45,15 @@ Player prefabs bundle the full pawn stack:
 - Gameplay components (inventory, stats, use, custom input).
 - Model + animation helpers.
 
-References:
-- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-walker\Assets\player.prefab`
-- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-jumpgame\Assets\Prefabs\Player\jumperplayer.prefab`
-
-### 5. Scene-Wired Gameplay Components (jumpgame)
+### 5. Scene-Wired Gameplay Components
 
 - Trigger volumes + components are placed directly in scenes.
 - Gameplay FX are child objects controlled by component parameters.
-
-References:
-- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-jumpgame\Assets\scenes\jumper.scene`
 
 ### 6. Razor + SCSS UI Pairing
 
 - Each UI component has a matching `.razor.scss`.
 - UI composition via `PanelComponent` and `BuildHash`.
-
-References:
-- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-walker\code\UI\Hud.razor`
-- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-walker\code\UI\Hud.razor.scss`
-- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-jumpgame\Code\UI\JumperMenu.razor`
 
 ## Practical Guidance for Basebound
 
@@ -91,12 +64,12 @@ References:
 
 ## Quick Reference
 
-| Pattern | Sample Source | Why it Helps |
-| --- | --- | --- |
-| State graph in prefab | `sbox-hc1` | Swap modes without code rewrites |
-| Additive UI scene | `sbox-walker` | Isolates UI and simplifies startup |
-| Player prefab stack | `walker`, `jumpgame` | Spawns are deterministic and data-driven |
-| Scene-wired triggers | `jumpgame` | Designers can edit gameplay without code |
+| Pattern | Why it Helps |
+| --- | --- |
+| State graph in prefab | Swap modes without code rewrites |
+| Additive UI scene | Isolates UI and simplifies startup |
+| Player prefab stack | Spawns are deterministic and data-driven |
+| Scene-wired triggers | Designers can edit gameplay without code |
 
 ## Common Pitfalls
 
