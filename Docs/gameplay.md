@@ -23,7 +23,19 @@ graph TB
 
 ## Core Mechanics Patterns (Generic)
 
+### Gamemode Composition via Prefabs
+
+S&box sample gamemodes build round flow as **prefab state graphs** rather than hardcoding logic:
+
+- `GameMode` + `StateMachineComponent` live at the root.
+- Each `StateComponent` defines a phase and hosts rule components (spawn, countdown, buy menu, scoring).
+- The mode switches between states using prefab references, so new modes are new prefab trees.
+
+Example:
+- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-hc1\Assets\prefabs\game_modes\deathmatch.prefab`
+
 ### Interaction and Use
+
 
 ```csharp
 public UseResult CanUse( PlayerPawn player )
@@ -88,7 +100,29 @@ GameObject.Tags.Add( "zone" );
 var zones = Scene.GetAllComponents<Zone>();
 ```
 
+### Scene-Driven Gameplay Components
+
+Facepunch samples lean on scene wiring to attach gameplay behavior to map objects:
+
+- Trigger volumes (`BoxCollider` with `IsTrigger = true`) own gameplay components (wind tunnels, finish lines).
+- FX are parented in the scene and driven by component properties.
+
+Examples:
+- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-jumpgame\Assets\scenes\jumper.scene`
+
+### Spawn and Lobby Bootstrap
+
+In small/medium modes, the `GameManager` handles lobby creation and per-connection spawn, cloning player prefabs directly:
+
+- `Networking.CreateLobby(...)` on host initialize.
+- `GameObject.Clone("/prefabs/player/...")` + `NetworkSpawn(owner)`.
+
+Examples:
+- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-jumpgame\Code\GamePlay\GameManager.cs`
+- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-walker\code\GameManager.cs`
+
 ## Game Systems
+
 
 
 ### Base Building System

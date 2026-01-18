@@ -151,6 +151,15 @@ public static void OpenMyMenu() { }
 - **API**: https://sbox.game/api
 - **Global usings**: `Sandbox`, `System.Collections.Generic`, `System.Linq` ([Code/Assembly.cs](Code/Assembly.cs))
 
+## MCP Servers
+
+Use these MCP servers when relevant to the task:
+
+- **Exa** – Web search and code context retrieval for current APIs and SDKs.
+- **Ref** – Documentation lookup and deep reads for library/framework guidance.
+- **Context7** – Up-to-date library docs and examples for specific packages.
+- **S&box** – S&box-specific context and tooling (engine/API references).
+
 ## Agent Skills
 
 Agent skills are located in `.github/skills/` and follow the [agentskills.io specification](https://agentskills.io/specification).
@@ -180,6 +189,8 @@ Skills are self-contained and should not require project documentation updates.
 | [sbox-ui-razor](.github/skills/sbox-ui-razor/) | Razor UI development (HTML/CSS/C#) | Building HUDs, menus, healthbars, interactive UI |
 | [sbox-triggers-collisions](.github/skills/sbox-triggers-collisions/) | Trigger & collision detection | Interactive zones, physics interactions, detecting enter/exit |
 | [sbox-gamemode-dev](.github/skills/sbox-gamemode-dev/) | Beginner-friendly gamemode architecture | Learning S&box, Client/Pawn split, event-driven rules, weapons, bots |
+| [sbox-sample-patterns](.github/skills/sbox-sample-patterns/) | Patterns from Facepunch sample gamemodes (prefabs, scenes, UI, spawn flow) | Building Basebound with reference to sample game structures |
+
 
 ### Adding New Skills
 

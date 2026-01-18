@@ -86,7 +86,16 @@ sequenceDiagram
 
 ## Best Practices
 
+### Lobby Bootstrapping
+
+Facepunch samples typically create a lobby on host init (for multiplayer samples), then rely on `Component.INetworkListener.OnActive` to spawn per-connection prefabs.
+
+Examples:
+- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-walker\code\GameManager.cs`
+- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-jumpgame\Code\GamePlay\GameManager.cs`
+
 ### Input Validation
+
 
 - **Client**: Apply input immediately for responsiveness (optimistic update)
 - **Server**: Validate all input before applying state changes

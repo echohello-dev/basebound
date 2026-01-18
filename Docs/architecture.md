@@ -134,7 +134,41 @@ explosion.NetworkSpawn();
 }
 ```
 
+### Scene Layering (Additive UI Scenes)
+
+Facepunch sample modes split UI into a lightweight **engine scene** loaded additively on host startup:
+
+- Host uses `Scene.Load` with `SceneLoadOptions.IsAdditive = true` to load an engine/UI scene once.
+- Engine scene wires a `ScreenPanel` to Razor components like `Hud`, `Chat`, and `Scoreboard`.
+
+See examples:
+- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-walker\code\GameManager.cs`
+- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-walker\Assets\Scenes\engine.scene`
+
+### Prefab-Driven Player Composition
+
+Player prefabs pack the entire pawn stack: controller, rigidbody, movement modes, inventory, camera, and custom gameplay components. This keeps spawn logic simple and repeatable:
+
+- `GameObject.Clone("/player.prefab", ...)` + `NetworkSpawn` for owner-spawned pawns.
+- Movement modes added as prefab components (`MoveModeWalk`, `MoveModeSwim`, `MoveModeLadder`).
+- Custom input/logic components (inventory, stats, use) live alongside engine components.
+
+See examples:
+- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-walker\Assets\player.prefab`
+- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-jumpgame\Assets\Prefabs\Player\jumperplayer.prefab`
+
+### Gamemode State Graphs as Prefabs
+
+S&box sample modes describe round flow directly in prefab hierarchies using `StateMachineComponent` + `StateComponent` nodes. Each node hosts rule components for that phase.
+
+- Root `GameMode` object owns global rules and a child `States` hierarchy.
+- Each `StateComponent` bundles rule components (respawn, UI, timers).
+
+See example:
+- `C:\Users\JohnnyHuynh\Projects\github.com\Facepunch\sbox-hc1\Assets\prefabs\game_modes\deathmatch.prefab`
+
 ## Gameplay Architecture
+
 
 
 ```mermaid
