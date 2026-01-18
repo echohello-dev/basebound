@@ -263,6 +263,13 @@ This keeps HUD and game logic stable across death/respawn and future possession 
 - `Assets/prefabs/player_pawn.prefab`
   - Contains the physical pawn (movement, collisions, camera).
   - Spawned by `Sandbox.NetworkHelper` as the `PlayerPrefab`.
+  - Includes `PlayerPawnBinder` to call `PlayerClient.OnPossess` on network spawn.
+
+### Networked Spawn Flow
+
+- `PlayerClientSpawner` spawns `player_client.prefab` on connection active.
+- `NetworkHelper` spawns `player_pawn.prefab` and assigns ownership.
+- `PlayerPawnBinder` runs on `OnNetworkSpawn` to bind the pawn to its `PlayerClient`.
 
 ## HUD Projection (HudDataBridge)
 

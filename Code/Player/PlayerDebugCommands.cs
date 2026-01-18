@@ -224,4 +224,68 @@ public static class PlayerDebugCommands
 		weapon.ReserveAmmo = reserve;
 		Log.Info($"bb_set_ammo: -> {weapon.CurrentAmmo}/{weapon.MaxAmmo} (Reserve {weapon.ReserveAmmo})");
 	}
+
+	[ConCmd("bb_add_weapon")]
+	public static void AddWeapon()
+	{
+		var player = GetLocalPlayerState();
+		if (player is null)
+		{
+			Log.Warning("bb_add_weapon: no local PlayerState found (PlayerClient.Local is null?)");
+			return;
+		}
+
+		if (player.IsProxy)
+		{
+			Log.Warning("bb_add_weapon: PlayerState is a proxy. Run this on the host/listen server to attach weapon.");
+			return;
+		}
+
+		var client = PlayerClient.Local.IsValid() ? PlayerClient.Local : PlayerClient.Viewer;
+		if (!client.IsValid())
+		{
+			Log.Warning("bb_add_weapon: no local or viewer client found.");
+			return;
+		}
+
+		var pawn = client.Pawn;
+		if (!pawn.IsValid())
+		{
+			Log.Warning($"bb_add_weapon: {client.DisplayName} has no pawn yet.");
+			return;
+		}
+
+		var pawnObject = pawn.GameObject;
+		if (!pawnObject.IsValid())
+		{
+			Log.Warning("bb_add_weapon: pawn has no valid GameObject.");
+			return;
+		}
+
+		var weapon = pawnObject.Components.GetOrCreate<WeaponComponent>();
+		Log.Info($"bb_add_weapon: attached {weapon.WeaponName} ({weapon.CurrentAmmo}/{weapon.MaxAmmo}, Reserve {weapon.ReserveAmmo}).");
+	}
+
+	[ConCmd("bb_dump_clients")]
+	public static void DumpClients()
+	{
+		var scene = Game.ActiveScene;
+		if (!scene.IsValid())
+		{
+			Log.Warning("bb_dump_clients: no active scene.");
+			return;
+		}
+
+		Log.Info($"bb_dump_clients: Local={(PlayerClient.Local.IsValid() ? PlayerClient.Local.DisplayName : "null")}, Viewer={(PlayerClient.Viewer.IsValid() ? PlayerClient.Viewer.DisplayName : "null")}");
+
+		foreach (var client in scene.GetAllComponents<PlayerClient>())
+		{
+			if (!client.IsValid())
+				continue;
+
+			var connection = client.Connection;
+			var connLabel = connection is null ? "null" : $"{connection.DisplayName} (Host={connection.IsHost}, Active={connection.IsActive})";
+			Log.Info($"- Client {client.DisplayName} | Id={client.Id} | IsProxy={client.IsProxy} | IsLocalPlayer={client.IsLocalPlayer} | Conn={connLabel} | PawnValid={client.Pawn.IsValid()} | PlayerStateValid={client.PlayerState.IsValid()} | IsAlive={client.PlayerState?.IsAlive}");
+		}
+	}
 }

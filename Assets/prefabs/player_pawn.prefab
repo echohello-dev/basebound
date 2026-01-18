@@ -106,6 +106,18 @@
         "OnComponentUpdate": null
       },
       {
+        "__type": "Basebound.Player.PlayerPawnBinder",
+        "__guid": "3f0b4d9a-2f61-4e6a-90f6-6f1f2a165e2b",
+        "__enabled": true,
+        "Flags": 0,
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      },
+      {
         "__type": "Sandbox.Movement.MoveModeWalk",
 
         "__guid": "fbd5d061-63e8-43f6-b05b-9de03dc3ec90",

@@ -141,36 +141,6 @@
           {
             "Id": {
               "Type": "GameObject",
-              "IdValue": "735f5ddb-d448-417c-afb8-1249d0e027ff"
-            },
-            "Parent": {
-              "Type": "GameObject",
-              "IdValue": "6c6e9384-2d1c-4a0e-ab91-facd8e384dae"
-            },
-            "PreviousElement": {
-              "Type": "GameObject",
-              "IdValue": "d254d3b0-d5f3-43ff-858c-d547698f6f52"
-            },
-            "ContainerProperty": "Children",
-            "IsContainerArray": true,
-            "Data": {
-              "__guid": "735f5ddb-d448-417c-afb8-1249d0e027ff",
-              "__version": 2,
-              "__Prefab": "prefabs/player_client.prefab",
-              "__PrefabInstancePatch": {
-                "AddedObjects": [],
-                "RemovedObjects": [],
-                "PropertyOverrides": [],
-                "MovedObjects": []
-              },
-              "__PrefabIdToInstanceId": {
-                "73756a6e-24b6-498a-b0bb-e700eabc33a7": "735f5ddb-d448-417c-afb8-1249d0e027ff"
-              }
-            }
-          },
-          {
-            "Id": {
-              "Type": "GameObject",
               "IdValue": "bb2c3738-c39e-4540-a6ff-c559cc1c5cc7"
             },
             "Parent": {
@@ -179,7 +149,7 @@
             },
             "PreviousElement": {
               "Type": "GameObject",
-              "IdValue": "735f5ddb-d448-417c-afb8-1249d0e027ff"
+              "IdValue": "d254d3b0-d5f3-43ff-858c-d547698f6f52"
             },
             "ContainerProperty": "Children",
             "IsContainerArray": true,

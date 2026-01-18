@@ -14,7 +14,24 @@
     "NetworkOrphaned": 0,
     "NetworkTransmit": true,
     "OwnerTransfer": 1,
-    "Components": [],
+    "Components": [
+      {
+        "__type": "Basebound.GameLoop.PlayerClientSpawner",
+        "__guid": "0c4c4a48-1e71-4f05-9d5e-9f1c6a845a35",
+        "__enabled": true,
+        "Flags": 0,
+        "ClientPrefab": {
+          "_type": "gameobject",
+          "prefab": "prefabs/player_client.prefab"
+        },
+        "OnComponentDestroy": null,
+        "OnComponentDisabled": null,
+        "OnComponentEnabled": null,
+        "OnComponentFixedUpdate": null,
+        "OnComponentStart": null,
+        "OnComponentUpdate": null
+      }
+    ],
     "Children": []
   },
   "ResourceVersion": 2,
